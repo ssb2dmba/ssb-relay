@@ -1,0 +1,37 @@
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>    
+<body class="black">
+      <div class="row" style="margin-top:48px;">
+        <div class="col s12 m10 offset-m1">
+         <div class="card green darken-3">
+            <div class="card-content white-text">
+              <span class="card-title">your invite code :</span>
+         
+              <p id=invitation style="word-wrap: break-word;">{{{ invitation }}}</p>
+  
+          </div>
+        </div>
+          </div>
+        </div>
+ 
+
+  
+</div>
+    </body>
+    <script>
+    if (!window.location.search) {
+        var urlInvitation = btoa('{{{ invitation }}}');
+        console.log('{{{ invitation }}}');
+        window.location= window.location.href + "?invitation=" + urlInvitation 
+    } else {
+      document.getElementById('invitation').innerHTML=atob(window.location.search.split("=")[1])
+    }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+</html>

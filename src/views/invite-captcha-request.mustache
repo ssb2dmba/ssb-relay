@@ -1,0 +1,82 @@
+<!--
+/*
+ * This file is part of the ssb-relay distribution (https://github.com/ssb2dmba/ssb-relay).
+ * Copyright (c) 2023 DMBA Emmanuel Florent.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body class="black">
+<style>
+
+    .green.darken-3 {
+        background-color: #4D4D33 !important;
+    }
+
+    /* label focus color */
+    .input-field input[type=text]:focus + label, .materialize-textarea:focus:not([readonly]) + label {
+        color: #4e342e !important;
+    }
+
+    /* label underline focus color */
+    .input-field input[type=text]:focus, .materialize-textarea:focus:not([readonly]) {
+        border-bottom: 1px solid #4e342e !important;
+        box-shadow: 0 1px 0 0 #4e342e !important;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+
+<div class="row p4" style="margin-top:48px;">
+
+    <div class="col s12 m10 offset-m1">
+
+
+        <div class="card green darken-3">
+            <div class="card-image">
+                <img src="captcha.svg" class="">
+            </div>
+            <div class="card-content white-text">
+                <span class="card-title">Are you a robot ?</span>
+
+                <form class="container" method="post" action="invite-captcha-reponse">
+                    <div class="row">
+
+                        <div class="input-field col m6">
+                            <input autofocus name="captcha" id="captcha" type="text" class="validate "">
+                            <label for="captcha">please fill text with image</label>
+                        </div>
+                        <div class="input-field col m6 right-align">
+                            <button class="btn waves-effect waves-light brown darken-3" type="submit" name="action">
+                                Submit <i class="material-icons right">lock_open</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
