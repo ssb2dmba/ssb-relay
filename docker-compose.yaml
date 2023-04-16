@@ -10,13 +10,18 @@ services:
     restart: always
     environment:
       DOMAINS: 'delog.in -> http://ssb-relay:8000'
-      # STAGE: 'production' # Don't use production until staging works
+      STAGE: 'production' # Don't use production until staging works
       # FORCE_RENEW: 'true'
     volumes:
       - https-portal-data:/var/lib/https-portal
   ssb-relay:
-    restart: on-failure
-    build: .
+    build:
+      context: .
+      args:
+        USER_ID: $USER
+        GROUP_ID: $GROUP
+    user: "${USER}:${GROUP}"
+    restart: always
     depends_on:
       - postgres
     links:
@@ -26,14 +31,18 @@ services:
       - "8008:8008"
     command: node dist/index.js
     volumes:
-      - ~./ssb:~./ssb
+      - ~/.ssb:/home/node/.ssb
   postgres:
+    user: "${USER}:${GROUP}"
     image: postgres:11
     ports:
       - "5432:5432"
-  environment:
-    POSTGRES_USER: ssb
-    POSTGRES_PASSWORD: ssb
-    POSTGRES_DB: ssb
+    volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ~/pgdata/:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ssb
+      POSTGRES_PASSWORD: ssb
+      POSTGRES_DB: ssb
 volumes:
   https-portal-data:
