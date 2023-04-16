@@ -28,7 +28,6 @@ export function scuttlebot(): Scuttlebot {
     .use(require('ssb-logging'))    
     .use(require('../../ssb-postgres'))
     .use(require('ssb-private1'))
-    .use(require('ssb-master'))
     .use(require('ssb-invite'))
     .use(require('ssb-ws'))
     return secretStack(config)

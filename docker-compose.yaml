@@ -31,5 +31,9 @@ services:
     image: postgres:11
     ports:
       - "5432:5432"
+  environment:
+    POSTGRES_USER: ssb
+    POSTGRES_PASSWORD: ssb
+    POSTGRES_DB: ssb
 volumes:
   https-portal-data:

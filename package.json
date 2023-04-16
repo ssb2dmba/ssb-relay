@@ -30,7 +30,7 @@
     "ssb-master": "^1.0.2",
     "ssb-private1": "^1.0.1",
     "ssb-ref": "^2.13.9",
-    "ssb-ws": "^6.2.1",
+    "ssb-ws": "^6.2.3",
     "svg-captcha": "^1.4.0"
   }
 }
