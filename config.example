@@ -1,0 +1,21 @@
+{
+  "connections": {
+    "incoming": {
+      "net": [
+        { "scope": "public", "external": ["delog.in"], "transform": "shs", "port": 8008 },
+        { "scope": "private", "transform": "shs", "port": 8008, "host": "192.168.0.45" } 
+      ]
+    
+    },
+    "outgoing": {
+      "net": [{ "transform": "shs" }]
+    }
+  },
+  "postgres": {
+        "user": "ssb",
+        "host": "postgres",
+        "database": "ssb",
+        "password": "ssb",
+        "port": 5432
+    }
+}
