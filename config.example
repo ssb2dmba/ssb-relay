@@ -17,5 +17,6 @@
         "database": "ssb",
         "password": "ssb",
         "port": 5432
-    }
+    },
+  "captcha": { "always_true": false}
 }

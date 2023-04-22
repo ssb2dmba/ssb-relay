@@ -1,4 +1,5 @@
 export interface Scuttlebot {
+    emit: Function;
     last: {
         get: Function
     };
@@ -10,7 +11,7 @@ export interface Scuttlebot {
     getAddress: Function;
     manifest: Function;
     getManifest: Function;
-    conf: object;
+    config: any;
     connect: Function;
     close: Function;
     /**
@@ -50,6 +51,7 @@ export interface Scuttlebot {
     messagesByType: Function;
     createWriteStream: Function;
     isFollowing: Function;
+    
     plugins: {
       install: Function;
       uninstall: Function;
@@ -91,6 +93,7 @@ export interface Scuttlebot {
       push: Function;
       pushed: Function;
       createWants: Function;
+      
     };
     invite: {
       create: Function;
@@ -103,5 +106,6 @@ export interface Scuttlebot {
     private: {
       publish: Function;
       unbox: Function;
-    };
+    },
+
   }

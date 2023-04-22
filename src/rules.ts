@@ -32,15 +32,15 @@ export function createNetWorkRules(server: Scuttlebot): object {
         fn(guest, function (err: any, auth: any) {          
             if(err||auth) return cb(err, auth)
             if (server.id == guest) {
-                console.warn("server aroot authenticating !")
+                server.emit('log:warn', ['rootauth', guest])
                 cb(null, true)
             } else {
                 server.isFollowing({ source: server.id, dest: guest }, (err: any, ok: any) => {
                     if (!ok) {
-                        console.log("ssb-relay auth hook ignored " + guest);
+                        server.emit('log:info',["hookignored ", guest]);
                         cb()
                     } else {
-                        console.log("connection accepted for " + guest);
+                        server.emit('log:info',["auth","authok", guest]);
                         cb(null, true)
                     }
                 })
@@ -68,9 +68,11 @@ export function createNetWorkRules(server: Scuttlebot): object {
         try {
             server.last.get(rpc.id, function (err: any, sequence: any) {
                 if (err) {
-                    console.log(err.message)
+                    console.log(err)
                     sequence = 0
                 }
+                if (Object.keys(sequence).length === 0) sequence = 0
+                server.emit('log:info', ['^Hist', rpc.id, sequence])
                 pull(
                     rpc.createHistoryStream({
                         id: rpc.id,

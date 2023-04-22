@@ -71,7 +71,8 @@ export function setupExpressApp(bot: Scuttlebot) {
 
     app.post('/invite/invite-captcha-reponse', (req: any, res: Response) => {
         var captcha = req.body.captcha;
-        if (!captcha || captcha != req.session.captcha) {
+        var bypass = bot.config.captcha?.always_true || false;
+        if (!bypass && (!captcha || captcha != req.session.captcha)) {
             return res.render('invite-captcha-invalid');
         }
         pull(
@@ -84,7 +85,6 @@ export function setupExpressApp(bot: Scuttlebot) {
                 if (dotct == 9) { // ipv4
                     invitation = invitation.replace(invitation.split(":").slice(0,8).join(":"),req.hostname)
                 }
-               // invitation = invitation.replace(/\[.*?\]\s?/g, req.hostname);
                 res.render('invite-captcha-reponse', { invitation });
             }, reportIfError),
         );

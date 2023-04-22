@@ -2,10 +2,10 @@
 
 An SSB pub server that works with [Delog](https://github.com/ssb2dmba/delog).
 
-## build
+## build / upgrade
 
 ```
-USER=$(id -u) GROUP=$(id -g) docker-compose build
+USER=$(id -u) GROUP=$(id -g) docker-compose build --no-cache
 ```
 
 ## run
