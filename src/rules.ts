@@ -37,8 +37,8 @@ export function createNetWorkRules(server: Scuttlebot): object {
             } else {
                 server.isFollowing({ source: server.id, dest: guest }, (err: any, ok: any) => {
                     if (!ok) {
-                        server.emit('log:info',["hookignored ", guest]);
-                        cb()
+                        server.emit('log:info',["REJECT", guest]);
+                        cb("unauthorized");
                     } else {
                         server.emit('log:info',["auth","authok", guest]);
                         cb(null, true)
@@ -47,6 +47,8 @@ export function createNetWorkRules(server: Scuttlebot): object {
             }
         })
     })
+
+
     
     var available = {}, streams = {}
 
@@ -59,12 +61,13 @@ export function createNetWorkRules(server: Scuttlebot): object {
             });
         }, function (err: any) {
             console.log(err)
+            console.log("#1")
         })
     }
 
     // opinion: on connect server call for client new message
     server.on('rpc:connect', function (rpc: any, isClient: any) {
-        console.log('rpc:connect', rpc.stream.address)
+        server.emit('rpc:connect', rpc.stream.address)
         try {
             server.last.get(rpc.id, function (err: any, sequence: any) {
                 if (err) {
@@ -84,6 +87,7 @@ export function createNetWorkRules(server: Scuttlebot): object {
             })
         } catch (e) {
             console.log(e)
+            console.log("#2")
         }
 
     })

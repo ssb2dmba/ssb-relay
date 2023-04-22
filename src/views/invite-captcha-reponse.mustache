@@ -26,7 +26,6 @@
     <script>
     if (!window.location.search) {
         var urlInvitation = btoa('{{{ invitation }}}');
-        console.log('{{{ invitation }}}');
         window.location= window.location.href + "?invitation=" + urlInvitation 
     } else {
       document.getElementById('invitation').innerHTML=atob(window.location.search.split("=")[1])
