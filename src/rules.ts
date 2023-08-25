@@ -66,7 +66,9 @@ export function createNetWorkRules(server: Scuttlebot): object {
     }
 
     // opinion: on connect server call for client new message
+
     server.on('rpc:connect', function (rpc: any, isClient: any) {
+       if (rpc.stream === undefined) return;
         server.emit('rpc:connect', rpc.stream.address)
         try {
             server.last.get(rpc.id, function (err: any, sequence: any) {
@@ -91,6 +93,6 @@ export function createNetWorkRules(server: Scuttlebot): object {
         }
 
     })
-    
+
     return server
 }
