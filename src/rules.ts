@@ -56,26 +56,26 @@ export function createNetWorkRules(server: Scuttlebot): object {
         var modern = false
         return pull.drain(function (data: any) {
             server.add(data.value, function (err: any, msg: any) {
-                // : bad protocol <- client ban
-                console.log(peer.stream.address, err);
+                if (err) {
+                    console.log(peer.stream.address, err);
+                }
             });
         }, function (err: any) {
-            console.log(err)
-            console.log("#1")
+            console.log(peer.stream.address, err)
         })
     }
 
     // opinion: on connect server call for client new message
-
     server.on('rpc:connect', function (rpc: any, isClient: any) {
        if (rpc.stream === undefined) return;
         server.emit('rpc:connect', rpc.stream.address)
         try {
-            server.last.get(rpc.id, function (err: any, sequence: any) {
+            server.last.get(rpc.id, function (err: any, message: any) {
                 if (err) {
                     console.log(err)
                     sequence = 0
                 }
+                var sequence = message.sequence
                 if (Object.keys(sequence).length === 0) sequence = 0
                 server.emit('log:info', ['^Hist', rpc.id, sequence])
                 pull(
