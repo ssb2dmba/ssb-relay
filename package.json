@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc && cp -r src/views dist",
-    "start": "tsc && cp -r src/views dist && node dist/index --host $HOST"
-  },
+    "start": "tsc && cp -r src/views dist && node dist/index --host $HOST",
+    "serve": "node_modules/.bin/pm2 start node dist/index.js"
+ },
   "author": "",
   "license": "GPLv3",
   "devDependencies": {

@@ -10,8 +10,8 @@ services:
     restart: always
     environment:
       DOMAINS: 'delog.in -> http://ssb-relay:8000'
-      STAGE: 'production' # Don't use production until staging works
-      # FORCE_RENEW: 'true'
+      STAGE: 'staging' # Don't use 'production' until staging works
+      FORCE_RENEW: 'true'
     volumes:
       - https-portal-data:/var/lib/https-portal
   ssb-relay:

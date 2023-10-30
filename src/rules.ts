@@ -61,23 +61,21 @@ export function createNetWorkRules(server: Scuttlebot): object {
                 }
             });
         }, function (err: any) {
-            console.log(peer.stream.address, err)
+            console.log('createHistoryStreamSink',peer.stream.address, err)
         })
     }
 
     // opinion: on connect server call for client new message
     server.on('rpc:connect', function (rpc: any, isClient: any) {
        if (rpc.stream === undefined) return;
-        server.emit('rpc:connect', rpc.stream.address)
         try {
             server.last.get(rpc.id, function (err: any, message: any) {
-                if (err) {
-                    console.log(err)
+		        var sequence = 0
+                if (err || Object.keys(message).length === 0) {
                     sequence = 0
-                }
-                var sequence = message.sequence
-                if (Object.keys(sequence).length === 0) sequence = 0
-                server.emit('log:info', ['^Hist', rpc.id, sequence])
+                } else {
+                    sequence = message.sequence
+		        }
                 pull(
                     rpc.createHistoryStream({
                         id: rpc.id,
@@ -88,8 +86,7 @@ export function createNetWorkRules(server: Scuttlebot): object {
                 )
             })
         } catch (e) {
-            console.log(e)
-            console.log("#2")
+            console.log('rpc:connect',e)
         }
 
     })

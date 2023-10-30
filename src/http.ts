@@ -94,6 +94,15 @@ export function setupExpressApp(bot: Scuttlebot) {
         res.render('invite-captcha-request');
     });
 
+
+    app.get('/.well-known/ssb/about/:networkIdentifier', (req: Request, res: Response) => {
+        var name = req.params.networkIdentifier;
+        bot.did.get(name, function (err: any, message: any) {
+            res.send(message);        
+        });
+
+    });
+
     return app.listen(app.get('port'), () => {
         console.log('Web app is running on port %s', app.get('port'));
     });

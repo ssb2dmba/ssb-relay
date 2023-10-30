@@ -3,6 +3,9 @@ export interface Scuttlebot {
     last: {
         get: Function
     };
+    did: {
+      get: Function
+    };
     on: Function;
     peers: any;
     publicKey: any;
