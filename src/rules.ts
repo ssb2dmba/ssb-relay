@@ -19,7 +19,6 @@ const pull = require('pull-stream')
 
 
 export function createNetWorkRules(server: Scuttlebot): object {
-
     var cbs: any[] = []
     function onReady(fn: any) {
         if (cbs) cbs.push(fn)
@@ -61,35 +60,37 @@ export function createNetWorkRules(server: Scuttlebot): object {
                 }
             });
         }, function (err: any) {
-            console.log('createHistoryStreamSink',peer.stream.address, err)
+            if (err.message !="unexpected hangup") {
+                console.log('createHistoryStreamSink',peer.stream.address, err.message)
+            }
         })
     }
 
-    // opinion: on connect server call for client new message
-    server.on('rpc:connect', function (rpc: any, isClient: any) {
-       if (rpc.stream === undefined) return;
-        try {
-            server.last.get(rpc.id, function (err: any, message: any) {
-		        var sequence = 0
-                if (err || Object.keys(message).length === 0) {
-                    sequence = 0
-                } else {
-                    sequence = message.sequence
-		        }
-                pull(
-                    rpc.createHistoryStream({
-                        id: rpc.id,
-                        seq: sequence,
-                        live: true
-                    }),
-                    createHistoryStreamSink(rpc)
-                )
-            })
-        } catch (e) {
-            console.log('rpc:connect',e)
+    // opinion when client terminate receiving his own messages relay query them also
+    server.on('db:createHistoryStream', function (id: any, isConnected: any) {
+        if (isConnected[0]!=null) {
+            var rpc = isConnected[0]
+            try {
+                server.last.get(rpc.id, function (err: any, message: any) {
+                    var sequence = 0
+                    if (err || Object.keys(message).length === 0) {
+                        sequence = 0
+                    } else {
+                        sequence = message.sequence
+                    }
+                    pull(
+                        rpc.createHistoryStream({
+                            id: rpc.id,
+                            seq: sequence,
+                            live: true
+                        }),
+                        createHistoryStreamSink(rpc)
+                    )
+                })
+            } catch (e) {
+                console.log('on db:createHistoryStream',e)
+            }
         }
-
     })
-
     return server
 }
