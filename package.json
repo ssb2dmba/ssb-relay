@@ -1,6 +1,6 @@
 {
   "name": "ssb-relay",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.1-SNAPSHOT",
   "description": "a SecureScuttlebut relay server",
   "main": "index.js",
   "scripts": {
