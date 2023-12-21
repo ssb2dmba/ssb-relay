@@ -4,4 +4,4 @@ dist
 deb-install/sysroot/DEBIAN/control
 deb-install/sysroot/DEBIAN/md5sums
 deb-install/sysroot/DEBIAN/home
-
+.vscode
