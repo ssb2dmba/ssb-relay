@@ -40,7 +40,7 @@ main() {
     GOT_DEB=1
   done < .github/config/package_list.txt
 
-  if [ $GOT_DEB -eq 1 ]
+  if [ 1 -eq 1 ]
   then
     pushd _site/deb >/dev/null
     mkdir -p "${DEB_DISTS_COMPONENTS}"
