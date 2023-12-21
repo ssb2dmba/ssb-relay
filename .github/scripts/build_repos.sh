@@ -27,19 +27,18 @@ main() {
       if [ -n "$deb_file" ]
       then
         GOT_DEB=1
-        mkdir -p "$DEB_POOL"
+
         pushd "$DEB_POOL" >/dev/null
         echo "Getting DEB"
         wget -q "https://github.com/${repo}/releases/download/${tag}/${deb_file}"
         popd >/dev/null
       fi
     fi
-    ls
-    ls deb-install
-    cp deb-install/*.deb $DEB_POOL
-    GOT_DEB=1
-  done < .github/config/package_list.txt
 
+  done < .github/config/package_list.txt
+  mkdir -p "$DEB_POOL"
+  cp deb-install/*.deb $DEB_POOL
+  GOT_DEB=1
   if [ 1 -eq 1 ]
   then
     pushd _site/deb >/dev/null
