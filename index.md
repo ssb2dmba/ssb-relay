@@ -18,14 +18,22 @@ https://github.com/ssb2dmba/ssb-relay)
 Download the [public key](dmba.gpg) and put it in
 `/etc/apt/keyrings/dmba.gpg`. You can achieve this with:
 
+- Debian:
+```
+wget -qO- https://ssb2dmba.github.io/ssb-relay/dmba.pgp | sudo tee /usr/share/keyrings/dmba.pgp >/dev/null
+echo "deb [arch=all signed-by=/usr/share/keyrings/dmba.pgp] https://ssb2dmba.github.io/ssb-relay/dist stable main" | sudo tee /etc/apt/sources.list.d/dmba.list >/dev/null
+```
+
+- Ubuntu:
 ```
 wget -qO- {{ site.url }}/dmba.asc | sudo tee /etc/apt/keyrings/dmba.asc >/dev/null
+echo "deb [arch=all signed-by=/etc/apt/keyrings/dmba.asc] https://ssb2dmba.github.io/ssb-relay/dist stable main" | sudo tee /etc/apt/sources.list.d/dmba.list >/dev/null
 ```
 
 Next, create the source in `/etc/apt/sources.list.d/`
 
 ```
-echo "deb [arch=all signed-by=/etc/apt/keyrings/dmba.asc] {{ site.url }}/deb stable main" | sudo tee /etc/apt/sources.list.d/dmba.list >/dev/null
+echo "deb [arch=all signed-by=/etc/apt/keyrings/dmba.asc] https://ssb2dmba.github.io/ssb-relay/dist stable main" | sudo tee /etc/apt/sources.list.d/dmba.list >/dev/null
 ```
 
 Then run `apt update && apt install -y` and the names of the packages you want to install.

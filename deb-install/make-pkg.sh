@@ -110,7 +110,7 @@ build_md5
 fix_control_perms
 
 archive="${package_name}_${app_version}_arm64.deb"
-fakeroot dpkg-deb --build "$node_deb_dir/sysroot" "$node_deb_dir/$archive"
+fakeroot dpkg-deb -Zxz --build "$node_deb_dir/sysroot" "$node_deb_dir/$archive"
 
 # cleanup
 # clean_build_dir

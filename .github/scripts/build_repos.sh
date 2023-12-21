@@ -16,6 +16,7 @@ main() {
   DEB_DISTS_COMPONENTS="${DEB_DISTS}/${COMPONENTS:-main}/binary-all"
   GPG_TTY=""
   export GPG_TTY
+  mkdir -p _site/deb/pool/main
   while IFS= read -r repo
   do
     echo "Parsing the repo list https://api.github.com/repos/${repo}/releases/latest)"  
@@ -29,23 +30,25 @@ main() {
         GOT_DEB=1
 
         pushd "$DEB_POOL" >/dev/null
-        echo "Getting DEB"
+        echo `pwd`
+        echo "Getting DEB https://github.com/${repo}/releases/download/${tag}/${deb_file} ..."
         wget -q "https://github.com/${repo}/releases/download/${tag}/${deb_file}"
+        echo "done"
         popd >/dev/null
       fi
     fi
 
   done < .github/config/package_list.txt
-  mkdir -p _site/deb
-  mkdir -p "$DEB_DISTS_COMPONENTS"
-  cp deb-install/*.deb $DEB_DISTS_COMPONENTS
+#  mkdir -p $DEB_POOL
+#  mkdir -p "$DEB_DISTS_COMPONENTS"
+#  cp deb-install/*.deb $DEB_DISTS_COMPONENTS
   GOT_DEB=1
-  if [ 1 -eq 1 ]
+  if [ $GOT_DEB -eq 1 ]
   then
     pushd _site/deb >/dev/null
     mkdir -p "${DEB_DISTS_COMPONENTS}"
     echo "Scanning all downloaded DEB Packages and creating Packages file."
-    dpkg-scanpackages --arch all pool/ > "${DEB_DISTS_COMPONENTS}/Packages"
+    dpkg-scanpackages  pool/ > "${DEB_DISTS_COMPONENTS}/Packages"
     gzip -9 > "${DEB_DISTS_COMPONENTS}/Packages.gz" < "${DEB_DISTS_COMPONENTS}/Packages"
     bzip2 -9 > "${DEB_DISTS_COMPONENTS}/Packages.bz2" < "${DEB_DISTS_COMPONENTS}/Packages"
     popd >/dev/null
