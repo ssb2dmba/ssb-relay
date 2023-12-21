@@ -36,10 +36,11 @@ jobs:
           echo GNUPGHOME="$(mktemp -d /tmp/pgpkeys-XXXXXX)" >> $GITHUB_ENV
           echo REPO_OWNER="$(echo "${GITHUB_REPOSITORY}" | cut -d/ -f1)" >> $GITHUB_ENV
           echo REPO_NAME="$(echo "${GITHUB_REPOSITORY}" | cut -d/ -f2)" >> $GITHUB_ENV
-          echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+          echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+
 
       - name: Build Debian package
-        run: ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.BRANCH }}  
+        run: ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.TAG }}  
                 
       - name: Release
         uses: softprops/action-gh-release@v1
