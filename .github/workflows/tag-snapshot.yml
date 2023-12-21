@@ -44,5 +44,5 @@ jobs:
            TAG="${VERSION}.${SHORTCOMMIT}"
            git tag $TAG -m "$TAG: nightly build"
            git push origin $TAG
-        with:
-          token: ${{secrets.PAT}}
+          with:
+            token: ${{secrets.PAT}}
