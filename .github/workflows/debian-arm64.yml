@@ -59,6 +59,8 @@ jobs:
           keep_latest: 1
           delete_tags: true
           delete_tag_pattern: SNAPSHOT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
