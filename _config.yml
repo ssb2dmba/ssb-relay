@@ -2,7 +2,7 @@ title: ssb2dmba
 email: emmanuel.florent@gmail.com
 description: >- 
   ssb-relay.
-baseurl: "https://ssb2dmba.github.io/ssb-relay/"
+baseurl: "/ssb-relay/"
 url: "https://ssb2dmba.github.io/ssb-relay"
 github_username: ssb2dmba
 
