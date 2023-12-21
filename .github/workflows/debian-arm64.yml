@@ -47,7 +47,7 @@ jobs:
         run: |
            git config user.name "${GITHUB_ACTOR}"
            git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-           VERSION=$(jq -r '.version' "$packagejson")
+           VERSION=$(jq -r '.version' package.json)
            TAG="${VERSION}.$(date +'%Y%m%d')"
            git tag -a $TAG -m "$TAG: nightly build"
            git push origin $TAG
