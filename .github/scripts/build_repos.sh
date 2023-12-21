@@ -20,7 +20,7 @@ main() {
   while IFS= read -r repo
   do
     echo "Parsing the repo list https://api.github.com/repos/${repo}/releases/latest)"  
-    if release=$(curl -fqs https://api.github.com/repos/${repo}/releases/latest)
+    if release=$(curl -fqs https://api.github.com/repos/${repo}/releases/latest
     then
       tag="$(echo "$release" | jq -r '.tag_name')"
       deb_file="$(echo "$release" | jq -r '.assets[] | select(.name | endswith(".deb")) | .name')"

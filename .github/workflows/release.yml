@@ -39,7 +39,12 @@ jobs:
           echo "TAG=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/tags/}}" >> $GITHUB_OUTPUT
 
       - name: Build Debian package
-        run: ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.TAG }}  
+        run: |
+          npm version ${{ steps.env_config.outputs.TAG }}
+          git add package.json
+          git commit -m v{{ steps.env_config.outputs.TAG }}
+          git push origin main
+          ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.TAG }}  
                 
       - name: Release
         uses: softprops/action-gh-release@v1
