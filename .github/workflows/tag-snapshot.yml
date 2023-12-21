@@ -43,6 +43,5 @@ jobs:
            VERSION=$(jq -r '.version' package.json)
            SHORTCOMMIT=$(git rev-parse --short HEAD)
            TAG="${VERSION}.${SHORTCOMMIT}"
-           git push --delete origin $TAG || true
            git tag -a $TAG -m "$TAG: nightly build"
            git push origin $TAG
