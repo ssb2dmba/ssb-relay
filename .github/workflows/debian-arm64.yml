@@ -45,15 +45,12 @@ jobs:
       - name: 'Clean up nightly releases'
         uses: dev-drprasad/delete-older-releases@v0.3.2
         with:
-          keep_latest: 5
+          keep_latest: 1
           delete_tags: true
-          delete_tag_pattern: nightly
-      
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: deb-install/*SNAPSHOT*.deb              
-
+          delete_tag_pattern: SNAPSHOT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Import GPG key
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v5
