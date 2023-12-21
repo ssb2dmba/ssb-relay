@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+
+remove_electrum_bin_link() {
+  rm /usr/local/Electrum-NMC/electrum_nmc/electrum/libsecp256k1.so.0 || true 
+}
+
+case "$1" in
+  upgrade|remove|failed-upgrade|abort-upgrade|abort-install|disappear)
+    ;;
+  purge)
+    remove_electrum_bin_link
+    ;;
+  *)
+    echo "postinst called with unknown argument '$1'"
+    ;;
+esac

@@ -1,0 +1,11 @@
+Source: {{ package_name }}
+Build-Depends: git, nodejs, libsodium, dpkg, fakeroot, jq
+Homepage: {{ homepage }}
+Version: {{ app_version }}
+Section: net
+Priority: optional
+Maintainer: {{ author }}.
+Package: {{ package_name }}
+Architecture: arm64
+Depends: postgresql, nginx, nodejs, libsodium23, coreutils, bash, tor, python3-cryptography, libsecp256k1-1
+Description: {{ package_description }} .

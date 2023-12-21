@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+systemctl stop pm2-ssb.service || true
+systemctl disable pm2-ssb.service || true
+rm /etc/systemd/system/pm2-ssb.service || true
+
+
+systemctl stop electrum_nmc || true
+systemctl disable electrum_nmc  || true
+rm   /etc/systemd/system/electrum_nmc.service  || true
+systemctl daemon-reload
+
+if [  -f /etc/tor/torrc ]; then
+    sed -i "s|HiddenServicePort 80 127.0.0.1:8000||g" "/etc/tor/torrc"
+    sed -i "s|HiddenServiceDir /var/lib/tor/ssb/||g" "/etc/tor/torrc"
+fi
+

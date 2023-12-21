@@ -1,0 +1,123 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+# User setup
+useradd --system  ssb || echo ""
+chown -R ssb:ssb /home/ssb
+
+
+# electrum_nmc startup script
+
+mkdir -p /home/ssb/.electrum-nmc/
+chmod 700 /home/ssb/.electrum-nmc
+if [ ! -f /home/ssb/.electrum-nmc/config ]; then
+  cat << EOF >> /home/ssb/.electrum-nmc/config
+{
+    "auto_connect": true,
+    "config_version": 3,
+    "is_maximized": false,
+    "persist_daemon": false,
+    "rpcpassword": "pass",
+    "rpcport": 7777,
+    "rpcuser": "user"
+}
+EOF
+fi
+
+chown -R ssb:ssb /home/ssb/.electrum-nmc
+
+ln -s  /usr/local/Electrum-NMC/run_electrum_nmc /usr/local/bin/run_electrum_nmc  || echo "WARN: Failed to create Electrum sym link"
+
+cp /usr/lib/aarch64-linux-gnu/libsecp256k1.so.1 /usr/local/Electrum-NMC/electrum_nmc/electrum/libsecp256k1.so.0
+
+
+if [ ! -f /etc/systemd/system/electrum_nmc.service ]; then
+  cat << EOF > /etc/systemd/system/electrum_nmc.service
+[Unit]
+Description=Electrum as systemd service
+After=network.target
+
+[Service]
+Type=forking
+User=ssb
+
+ExecStart=/usr/local/bin/run_electrum_nmc daemon --rpcsock tcp --rpcport 7777 -d
+ExecStartPost=sleep 30 && /usr/local/bin/run_electrum_nmc load_wallet
+Restart=always
+RestartSec=10 
+SyslogIdentifier=electrum_nmc
+
+[Install]
+WantedBy=multi-user.target
+EOF
+fi
+ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.target.wants/electrum_nmc.service || echo "WARN: Failed to create Electrum startup sym link"
+
+su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb
+su -c "/usr/local/bin/run_electrum_nmc create" ssb || echo "WARN: Failed to create default electrum wallet"
+su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
+systemctl daemon-reload
+systemctl start electrum_nmc
+
+# Postgres database setup
+su - postgres -c "psql template1 -c 'create database ssb'" || echo "WARN: Failed to create ssb database"
+su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\"" || echo "WARN: Failed to create ssb database user"
+su - postgres -c 'psql -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql' || echo "WARN: Failed init ssb database"
+
+
+# tor configuration
+if grep -xq  "^HiddenServicePort 80 127.0.0.1:8000" /etc/tor/torrc;
+then
+  echo "[WARN] tor config exists skipping"
+else
+  cat << EOF >> /etc/tor/torrc
+HiddenServiceDir /var/lib/tor/ssb/
+HiddenServicePort 80 127.0.0.1:8000
+HiddenServicePort 8008 127.0.0.1:8008
+EOF
+fi
+systemctl restart tor
+
+ONION=`cat /var/lib/tor/ssb/hostname`
+
+# relay startup script
+if [ ! -f /etc/systemd/system/pm2-ssb.service ]; then
+  cat << EOF >> /etc/systemd/system/pm2-ssb.service
+[Unit]
+Description=PM2 process manager
+Documentation=https://pm2.keymetrics.io/
+After=network.target
+
+[Service]
+Type=forking
+User=ssb
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=PM2_HOME=/home/ssb/.pm2
+PIDFile=/home/ssb/.pm2/pm2.pid
+Restart=on-failure
+
+ExecStart=/usr/local/ssb-relay/node_modules/pm2/bin/pm2 resurrect
+ExecReload=/usr/local/ssb-relay/node_modules/pm2/bin/pm2 reload all
+ExecStop=/usr/local/ssb-relay/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target
+EOF
+fi
+
+if [ ! -f /etc/systemd/system/multi-user.target.wants/pm2-ssb.service ]; then
+  ln -s /etc/systemd/system/pm2-ssb.service /etc/systemd/system/multi-user.target.wants/pm2-ssb.service
+fi 
+
+mkdir -p /home/ssb/.ssb
+cp /usr/local/ssb-relay/config.example /home/ssb/.ssb/config
+sed -i "s|@external@|$ONION|g" "/home/ssb/.ssb/config"
+chown -R ssb:ssb /home/ssb/.ssb
+
+systemctl daemon-reload
+
+systemctl restart pm2-ssb
