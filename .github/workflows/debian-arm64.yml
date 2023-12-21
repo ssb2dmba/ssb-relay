@@ -1,4 +1,4 @@
-name: Deploy Debian and RPM Repo plus Jekyll homepage
+name: Deploy Debian repository and SNAPSHOT build
 
 on:
   push:
