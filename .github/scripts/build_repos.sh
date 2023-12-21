@@ -36,6 +36,7 @@ main() {
     fi
 
   done < .github/config/package_list.txt
+  mkdir -p _site/deb
   mkdir -p "$DEB_DISTS_COMPONENTS"
   cp deb-install/*.deb $DEB_DISTS_COMPONENTS
   GOT_DEB=1
