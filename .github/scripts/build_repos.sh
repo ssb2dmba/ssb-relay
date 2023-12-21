@@ -16,9 +16,9 @@ main() {
   DEB_DISTS_COMPONENTS="${DEB_DISTS}/${COMPONENTS:-main}/binary-all"
   GPG_TTY=""
   export GPG_TTY
-  echo "Parsing the repo list https://api.github.com/repos/${repo}/releases/latest)"
   while IFS= read -r repo
   do
+    echo "Parsing the repo list https://api.github.com/repos/${repo}/releases/latest)"  
     if release=$(curl -fqs https://api.github.com/repos/${repo}/releases/latest)
     then
       tag="$(echo "$release" | jq -r '.tag_name')"
@@ -36,8 +36,8 @@ main() {
     fi
 
   done < .github/config/package_list.txt
-  mkdir -p "$DEB_POOL"
-  cp deb-install/*.deb $DEB_POOL
+  mkdir -p "$DEB_DISTS_COMPONENTS"
+  cp deb-install/*.deb $DEB_DISTS_COMPONENTS
   GOT_DEB=1
   if [ 1 -eq 1 ]
   then
@@ -67,7 +67,7 @@ main() {
     echo "Signing Release file"
     gpg --detach-sign --armor --sign > Release.gpg < Release
     gpg --detach-sign --armor --sign --clearsign > InRelease < Release
-    echo "DEB repo built"
+    echo "$DEB_POOL DEB repo built"
     popd >/dev/null
   fi
 }
