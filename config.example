@@ -2,21 +2,26 @@
   "connections": {
     "incoming": {
       "net": [
-        { "scope": "public", "external": ["delog.in"], "transform": "shs", "port": 8008 },
-        { "scope": "private", "transform": "shs", "port": 8008, "host": "192.168.0.45" } 
+        { "scope": "public", "external": ["@external@"], "transform": "shs", "port": 8008 },
+        { "host": "0.0.0.0", "port": 8008, "scope": "public", "transform": "shs" },
+        { "scope": "private", "transform": "shs", "port": 8008, "host": "0.0.0.0" }
       ]
-    
+
     },
     "outgoing": {
-      "net": [{ "transform": "shs" }]
+      "net": [{ "transform": "shs" }],
+    "onion": [{ "transform": "shs" }]
     }
   },
+
+"logging": { "level": "info" },
   "postgres": {
         "user": "ssb",
-        "host": "postgres",
+        "host": "127.0.0.1",
         "database": "ssb",
         "password": "ssb",
         "port": 5432
     },
   "captcha": { "always_true": false}
 }
+

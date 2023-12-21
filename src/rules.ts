@@ -47,8 +47,6 @@ export function createNetWorkRules(server: Scuttlebot): object {
         })
     })
 
-
-    
     var available = {}, streams = {}
 
     function createHistoryStreamSink(peer: any) {

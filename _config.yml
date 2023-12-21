@@ -1,0 +1,15 @@
+title: ssb2dmba
+email: emmanuel.florent@gmail.com
+description: >- 
+  ssb-relay.
+baseurl: ""
+url: "https://ssb2dmba.github.io/ssb-relay/"
+github_username: ssb2dmba
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+exclude:
+  - src/
+  - deb-install/

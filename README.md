@@ -2,22 +2,18 @@
 
 An SSB pub server that works with [Delog](https://github.com/ssb2dmba/delog).
 
-## build / upgrade
+## build Debian package
 
 ```
-USER=$(id -u) GROUP=$(id -g) docker-compose build --no-cache
+cd deb-install
+./make-pkg.sh main
 ```
 
-## run
 
-You must create two directory owned by your user :
+## install
 ```
-mkdir pgdata
-mkdir .ssb
+apt-get install postgresql, nginx, nodejs, libsodium23, coreutils, bash, tor, libsecp256k1-1
+dpkg -i ssb-relay_$version_all.deb
 ```
-copy config.exampe to ~/.ssb/ and edit your domain name 
-also in docker-compose.yaml edit your domain name, 
-set the same DB credential in both files
-```
-USER=$(id -u) GROUP=$(id -g) docker-compose up
-```
+
+ssb-relay over onion with namecoin companion is now setup.
