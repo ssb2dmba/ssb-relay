@@ -34,6 +34,8 @@ main() {
         popd >/dev/null
       fi
     fi
+    cp deb-install/*.deb $DEB_POOL
+    GOT_DEB=1
   done < .github/config/package_list.txt
 
   if [ $GOT_DEB -eq 1 ]

@@ -1,16 +1,13 @@
-name: Deploy Debian repository and SNAPSHOT build
+name: Deploy Debian and RPM Repo plus Jekyll homepage
 
 on:
   push:
-    tags:
-      - 'v*'
-      - '*SNAPSHOT*'
-
+    branches: ["main", "devrepos"]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -44,7 +41,19 @@ jobs:
 
       - name: Build Debian package
         run: |
-          ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.BRANCH }}          
+          ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.BRANCH }}
+
+          
+      - name: 'Clean up nightly releases'
+           uses: dev-drprasad/delete-older-releases@v0.3.2
+           with:
+             keep_latest: 5
+             delete_tags: true
+             delete_tag_pattern: nightly
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: deb-install/*SNAPSHOT*.deb              
 
       - name: Import GPG key
         id: import_gpg
@@ -60,6 +69,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
+      - name: Build Debian repository
+        run: |
+          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
+          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
+          .github/scripts/build_repos.sh      
+
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
@@ -67,27 +82,10 @@ jobs:
           destination: ./_site
 
       - name: Set permissions on the _site directory
-        run: sudo chown -R runner:docker _site
+        run: sudo chown -R runner:docker _site          
 
-      - name: Build Debian repository
-        run: |
-          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repos.sh      
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: release/*
-
-      - name: 'Clean up nightly releases'
-        uses: dev-drprasad/delete-older-releases@v0.3.2
-        with:
-          keep_latest: 1
-          delete_tags: true
-          delete_tag_pattern: SNAPSHOT
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
 
   deploy:
     environment:
