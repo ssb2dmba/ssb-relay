@@ -48,7 +48,9 @@ jobs:
            git config user.name "${GITHUB_ACTOR}"
            git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
            VERSION=$(jq -r '.version' package.json)
-           TAG="${VERSION}.$(date +'%Y%m%d')"
+           SHORTCOMMIT=$(git rev-parse --short HEAD)
+           TAG="${VERSION}.${SHORTCOMMIT}"
+           git push --delete origin $TAG || true
            git tag -a $TAG -m "$TAG: nightly build"
            git push origin $TAG
       - name: 'Clean up nightly releases'
