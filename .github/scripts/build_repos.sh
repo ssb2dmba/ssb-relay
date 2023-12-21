@@ -16,7 +16,7 @@ main() {
   DEB_DISTS_COMPONENTS="${DEB_DISTS}/${COMPONENTS:-main}/binary-all"
   GPG_TTY=""
   export GPG_TTY
-  echo "Parsing the repo list"
+  echo "Parsing the repo list https://api.github.com/repos/${repo}/releases/latest)"
   while IFS= read -r repo
   do
     if release=$(curl -fqs https://api.github.com/repos/${repo}/releases/latest)
