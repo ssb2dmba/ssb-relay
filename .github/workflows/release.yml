@@ -93,8 +93,7 @@ jobs:
           git merge main
           git commit
           git push origin devel
-          npm version prepatch
+          npm version prepatch --preid SNAPSHOT
           git add package.json
           git commit -m "prepare next version"
-          git push origin devel
-          
+          git push -f origin devel
