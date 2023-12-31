@@ -15,16 +15,11 @@ node_deb_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 install_relay_from_source() {
   mkdir -p "$node_deb_dir/sysroot/usr/local/"
   cd "$node_deb_dir/sysroot/usr/local/"
-  git clone https://github.com/ssb2dmba/ssb-postgres --branch "$branch"
   git clone https://github.com/ssb2dmba/ssb-relay --branch "$branch"
-  cd ssb-postgres
-  rm -fr .git
-  npm install
-  cd ../ssb-relay
+  cd ./ssb-relay
   rm -fr .git
   npm install
   npm run build
-  chmod -R 755 "$node_deb_dir/sysroot/usr/local/ssb-postgres"
   chmod -R 755 "$node_deb_dir/sysroot/usr/local/ssb-relay"
 }
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of the ssb-relay distribution (https://github.com/ssb2dmba/ssb-relay).
+ * This file is part of the ssb-postgres distribution (https://github.com/ssb2dmba/ssb-postgres).
  * Copyright (c) 2023 DMBA Emmanuel Florent.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,23 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import { Scuttlebot } from "./types/scuttlebot-type"
 
-const Config = require('ssb-config/inject')
-
-var SecretStack = require('secret-stack')
-var caps = require('ssb-caps')
-
-export function scuttlebot(): Scuttlebot {
-
-    var config = Config()
-    var secretStack =  SecretStack({ caps })
-    .use(require('ssb-master')) // define ssb.key as our   
-    .use(require('ssb-logging'))    
-    .use(require('./storage'))
-    .use(require('ssb-private1'))
-    .use(require('ssb-invite'))
-    .use(require('ssb-ws'))
-    return secretStack(config)
-
+module.exports = function db(dir, keys, opts) {
+    return require('./minimal')(keys, opts)
 }

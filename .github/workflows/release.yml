@@ -85,16 +85,3 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
-      - name: reset devel
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git checkout devel
-          git merge main
-          git commit
-          git push origin devel
-          npm version prepatch
-          git add package.json
-          git commit -m "prepare next version"
-          git push origin devel
-          
