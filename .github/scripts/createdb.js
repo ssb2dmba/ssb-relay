@@ -20,7 +20,7 @@ const credentialsSSB =   {
 
 async function setupDatabase() {
 
-const clientRoot = new Client(credentialsRoot);
+/* const clientRoot = new Client(credentialsRoot);
 await clientRoot.connect();
 console.log("dropping database ssb if exists.");
 await clientRoot.query("DROP DATABASE IF EXISTS ssb;");
@@ -33,12 +33,12 @@ await clientRoot.query("CREATE USER ssb WITH PASSWORD 'ssb';");
 console.log("creating ssb database.");
 await clientRoot.query("CREATE DATABASE ssb;");
 console.log(`created database and user ssb.`);
-await clientRoot.end();
+await clientRoot.end(); */
 
 
 const clientSSB = new Client(credentialsSSB);
 await clientSSB.connect();
-console.log("create user");
+console.log("init database");
 const data = await fs.readFile("./init.sql", "utf-8");
 await clientSSB.query(data);
 await clientSSB.end();

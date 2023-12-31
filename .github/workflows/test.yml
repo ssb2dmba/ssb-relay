@@ -11,9 +11,9 @@ jobs:
         image: postgres
 
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: ssb
+          POSTGRES_USER: ssb
+          POSTGRES_DB: ssb
 
         options: >-
           --health-cmd pg_isready
@@ -41,7 +41,7 @@ jobs:
         env:
           DBURL: "postgres://postgres:postgres@localhost:5432/postgres"
 
-      - name: Run the mock tests function
+      - name: Run tests
         run: npm run test
         env:
           DBURL: postgres://postgres:postgres@localhost:5432/postgres
