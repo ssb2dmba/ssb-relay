@@ -1,9 +1,12 @@
 name: Release
 on:
-  push:
+  workflow_run:
+    workflows: ["Running Tests"]
     branches:
       - main
       - devel
+    types: 
+      - completed      
   repository_dispatch:
     types: [semantic-release]
 jobs:
