@@ -32,7 +32,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          # cache: 'npm'
+          cache: 'npm'
+
 
 
       - name: Install required packages
@@ -42,6 +43,7 @@ jobs:
               sleep 1
             done
             sudo apt install -y libsodium-dev
+
 
       - name: Install dependencies
         run: |

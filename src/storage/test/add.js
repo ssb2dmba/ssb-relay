@@ -168,7 +168,8 @@ function run(opts) {
                     t.deepEqual(msgVal, msg.value)
                     t.end()
                 }, 500)
-            }, 0)
+
+            }, 500)
 
         })
     })
