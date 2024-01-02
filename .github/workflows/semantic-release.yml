@@ -46,4 +46,7 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn semantic-release
+        run: | 
+          git config --global user.email "emmanuel.florent@gmail.com"
+          git config --global user.name "DMBA"
+          yarn semantic-release
