@@ -32,16 +32,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: 'npm'
+          # cache: 'npm'
 
-
-      - name: Install required packages
-        run: |
-            until sudo apt update
-            do
-              sleep 1
-            done
-            sudo apt install -y libsodium-dev
 
       - name: Install required packages
         run: |
@@ -52,7 +44,9 @@ jobs:
             sudo apt install -y libsodium-dev
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          python --version
+          npm install
 
       - name: create database
         run: node .github/scripts/createdb.js

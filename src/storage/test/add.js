@@ -167,7 +167,7 @@ function run(opts) {
                 util.promisify(ssb.get)(msg.key).then(msgVal => {
                     t.deepEqual(msgVal, msg.value)
                     t.end()
-                })
+                }, 500)
             }, 0)
 
         })

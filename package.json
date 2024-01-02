@@ -30,7 +30,6 @@
     "ssb-backlinks": "^2.0.1",
     "ssb-feed": "^2.2.1",
     "ssb-private1": "^1.0.1",
-    "ssb-tribes": "^0.1.2",
     "tap-spec": "^2.2.2",
     "tape": "^5.3.1",
     "ts-jest": "^29.1.1",
