@@ -55,3 +55,8 @@ jobs:
           git pull origin devel
           git merge --no-ff main -m "Auto-merge main back to dev"
           git push --set-upstream origin devel
+
+          npm version prepatch --preid development
+          git add package.json
+          git commit -m "Bump version to $(node -p -e "require('./package.json').version")"
+          git push --set-upstream origin devel
