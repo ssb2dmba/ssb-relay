@@ -39,6 +39,19 @@ CREATE UNIQUE INDEX key_idx ON public.message USING btree (((message ->> 'key'::
 
 
 --
+-- Name: root; Type: TABLE; Schema: public; Owner: ssb
+--
+
+CREATE TABLE public.root (
+    key VARCHAR(255),
+    updated_on timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.root OWNER TO ssb;
+
+--
 -- PostgreSQL database dump complete
 --
+
 
