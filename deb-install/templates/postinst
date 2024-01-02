@@ -118,6 +118,20 @@ cp /usr/local/ssb-relay/config.example /home/ssb/.ssb/config
 sed -i "s|@external@|$ONION|g" "/home/ssb/.ssb/config"
 chown -R ssb:ssb /home/ssb/.ssb
 
+# is grants the node binary cap_net_raw privileges, so it can start/stop BLE advertising.
+sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
+# allow sudo script
+# relay startup script
+if [ ! -f /etc/sudoers.d/iw ]; then
+  cat << EOF >> /etc/sudoers.d/iw
+%ssb ALL = (root) NOPASSWD: scanWIFI.sh
+%ssb ALL = (root) NOPASSWD: setWIFI.sh
+%ssb ALL = (root) NOPASSWD: cat /etc/network/interfaces.d/wlan0
+EOF
+fi
+
+
 systemctl daemon-reload
 
 systemctl restart pm2-ssb
+

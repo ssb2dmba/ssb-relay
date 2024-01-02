@@ -79,7 +79,10 @@ module.exports = {
             friends: { // for compat with ssb-invite
                 isFollowing: ssb.isFollowing
             },
-            emit: ssb.sbot.emit
+            emit: ssb.sbot.emit,
+            setRoot: ssb.setRoot,
+            getRoot: ssb.getRoot,
+            clearRoot: ssb.clearRoot
         }
     }
 }

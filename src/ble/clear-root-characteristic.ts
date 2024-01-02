@@ -14,13 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {scuttlebot} from './scuttlebot';
-import {setupExpressApp} from './http';
-import {createNetWorkRules} from './rules';
-import {SsbPeripheral} from './ble/peripheral';
+import bleno from '@abandonware/bleno';
+import { getCharacteristicUuid } from './ServiceDefinition';
+import { SsbBle } from './ssb-ble';
 
 
-const sbot = scuttlebot();
-createNetWorkRules(sbot)
-setupExpressApp(sbot);
-new SsbPeripheral(sbot)
+export class ClearRootCharacteristic extends bleno.Characteristic {
+  constructor(public ssbBle: SsbBle) {
+    super({
+      uuid: getCharacteristicUuid('SsbRelay', 'clearRoot'),
+      properties: ['write'],
+      descriptors: [
+        new bleno.Descriptor({
+          uuid: '2901',
+          value: 'clear root owner'
+        })
+      ]
+    });
+  }
+
+  onWriteRequest(data: Buffer, offset: number, withoutResponse: boolean, callback: (result: number) => void) {
+    const pincode = data.toString();;
+    this.ssbBle.clearRoot(Number(pincode));
+    callback(this.RESULT_SUCCESS);
+  }
+
+
+}

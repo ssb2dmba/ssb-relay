@@ -21,6 +21,8 @@ install_relay_from_source() {
   npm install
   npm run build
   chmod -R 755 "$node_deb_dir/sysroot/usr/local/ssb-relay"
+  cp src/ble/scanWIFI.sh "$node_deb_dir/sysroot/usr/local/bin/"
+  cp src/ble/setWIFI.sh "$node_deb_dir/sysroot/usr/local/bin/"
 }
 
 install_electrum_nmc() {
