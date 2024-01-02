@@ -18,7 +18,7 @@ install_relay_from_source() {
   git clone https://github.com/ssb2dmba/ssb-relay --branch "$branch"
   cd ./ssb-relay
   rm -fr .git
-  npm install
+  npm --python=python2.7 install
   npm run build
   chmod -R 755 "$node_deb_dir/sysroot/usr/local/ssb-relay"
   mkdir -p "$node_deb_dir/sysroot/usr/local/bin/"
