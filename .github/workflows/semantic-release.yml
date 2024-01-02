@@ -50,3 +50,8 @@ jobs:
           git config --global user.email "emmanuel.florent@gmail.com"
           git config --global user.name "DMBA"
           yarn semantic-release
+          git fetch --unshallow
+          git checkout devel
+          git pull
+          git merge --no-ff main -m "Auto-merge master back to dev"
+          git push
