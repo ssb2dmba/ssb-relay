@@ -3,7 +3,7 @@ import { getCharacteristicUuid } from './ServiceDefinition';
 import { SsbBle } from './ssb-ble';
 import { exec } from "node:child_process";
 
-export class SsidCharacteristic extends bleno.Characteristic {
+export class WifiPasswordCharacteristic  extends bleno.Characteristic {
     constructor(public ssbBle: SsbBle) {
       super({
         uuid: getCharacteristicUuid('SsbRelay', 'ssid'),
