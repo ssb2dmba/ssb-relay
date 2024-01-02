@@ -54,4 +54,4 @@ jobs:
           git checkout devel
           git pull origin devel
           git merge --no-ff main -m "Auto-merge main back to dev"
-          git push
+          git push --set-upstream origin devel
