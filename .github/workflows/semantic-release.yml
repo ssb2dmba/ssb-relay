@@ -52,6 +52,6 @@ jobs:
           yarn semantic-release
           git fetch
           git checkout devel
-          git pull
+          git pull origin devel
           git merge --no-ff main -m "Auto-merge main back to dev"
           git push
