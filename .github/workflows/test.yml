@@ -35,13 +35,6 @@ jobs:
           cache: 'npm'
 
 
-      - name: Install required packages
-        run: |
-            until sudo apt update
-            do
-              sleep 1
-            done
-            sudo apt install -y libsodium-dev
 
       - name: Install required packages
         run: |
@@ -50,6 +43,7 @@ jobs:
               sleep 1
             done
             sudo apt install -y libsodium-dev
+
 
       - name: Install dependencies
         run: |
