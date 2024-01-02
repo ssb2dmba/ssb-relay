@@ -17,3 +17,4 @@ dpkg -i ssb-relay_$version_all.deb
 ```
 
 ssb-relay over onion with namecoin companion is now setup.
+

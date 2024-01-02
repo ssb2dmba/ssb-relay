@@ -110,5 +110,7 @@ export interface Scuttlebot {
       publish: Function;
       unbox: Function;
     },
-
+    setRoot: Function,
+    getRoot: Function,
+    clearRoot: Function
   }

@@ -1,5 +1,5 @@
 /*
- * This file is part of the ssb-relay distribution (https://github.com/ssb2dmba/ssb-relay).
+ * This file is part of the ssb-postgres distribution (https://github.com/ssb2dmba/ssb-postgres).
  * Copyright (c) 2023 DMBA Emmanuel Florent.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,13 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {scuttlebot} from './scuttlebot';
-import {setupExpressApp} from './http';
-import {createNetWorkRules} from './rules';
-import {SsbPeripheral} from './ble/peripheral';
 
-
-const sbot = scuttlebot();
-createNetWorkRules(sbot)
-setupExpressApp(sbot);
-new SsbPeripheral(sbot)
+module.exports = function db(dir, keys, opts) {
+    return require('./minimal')(keys, opts)
+}

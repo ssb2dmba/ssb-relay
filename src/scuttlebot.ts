@@ -27,7 +27,7 @@ export function scuttlebot(): Scuttlebot {
     var secretStack =  SecretStack({ caps })
     .use(require('ssb-master')) // define ssb.key as our   
     .use(require('ssb-logging'))    
-    .use(require('../../ssb-postgres'))
+    .use(require('./storage'))
     .use(require('ssb-private1'))
     .use(require('ssb-invite'))
     .use(require('ssb-ws'))

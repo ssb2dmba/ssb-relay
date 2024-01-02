@@ -1,0 +1,67 @@
+name: Running Tests
+
+on: [push]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: ssb
+          POSTGRES_USER: ssb
+          POSTGRES_DB: ssb
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      # run steps required in the workflow
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+
+      - name: Install required packages
+        run: |
+            until sudo apt update
+            do
+              sleep 1
+            done
+            sudo apt install -y libsodium-dev
+
+      - name: Install required packages
+        run: |
+            until sudo apt update
+            do
+              sleep 1
+            done
+            sudo apt install -y libsodium-dev
+
+      - name: Install dependencies
+        run: |
+          python --version
+          npm install
+
+      - name: create database
+        run: node .github/scripts/createdb.js
+        env:
+          DBURL: "postgres://postgres:postgres@localhost:5432/postgres"
+
+      - name: Run tests
+        run: npm run test
+        env:
+          DBURL: postgres://postgres:postgres@localhost:5432/postgres

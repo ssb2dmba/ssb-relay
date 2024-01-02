@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install required packages
         run: |
@@ -85,15 +85,4 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
-      - name: reset devel
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git checkout devel
-          git merge main
-          git commit
-          git push origin devel
-          npm version prepatch --preid SNAPSHOT
-          git add package.json
-          git commit -m "prepare next version"
-          git push -f origin devel
+
