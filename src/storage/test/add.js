@@ -163,7 +163,7 @@ function run(opts) {
             t.error(err)
             console.log(msg.key)
             t.equal(msg.value.content.type, 'okay')
-            setTimeout(() => {
+            setTimeout(500, () => {
                 util.promisify(ssb.get)(msg.key).then(msgVal => {
                     t.deepEqual(msgVal, msg.value)
                     t.end()
