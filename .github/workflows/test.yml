@@ -33,6 +33,14 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: Install required packages
+        run: |
+            until sudo apt update
+            do
+              sleep 1
+            done
+            sudo apt install -y libsodium-dev
+
       - name: Install dependencies
         run: npm install
 
