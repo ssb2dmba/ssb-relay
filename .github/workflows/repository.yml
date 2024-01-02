@@ -45,7 +45,10 @@ jobs:
           echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
       - name: Build Debian package
-        run: ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.BRANCH }}  
+        run: | 
+          git config --global user.email "emmanuel.florent@gmail.com"
+          git config --global user.name "DMBA"
+          ./deb-install/make-pkg.sh ${{ steps.env_config.outputs.BRANCH }}  
       
       - name: 'Clean up nightly releases'
         uses: dev-drprasad/delete-older-releases@v0.3.2
