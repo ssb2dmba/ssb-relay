@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/tape src/storage/test/*.js",
+    "test": "./node_modules/.bin/tape src/storage/test/*.js && ./node_modules/.bin/jest",
     "build": "tsc && cp -r src/views dist && cp -r src/storage dist && cp -r package.json dist ",
     "start": "npm run build && node dist/index",
     "serve": "node_modules/.bin/pm2 start node dist/index.js",
