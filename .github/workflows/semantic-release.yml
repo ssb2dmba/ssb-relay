@@ -1,4 +1,4 @@
-name: Release
+name: Semantic release
 on:
   push:
     branches:
@@ -9,6 +9,22 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: ssb
+          POSTGRES_USER: ssb
+          POSTGRES_DB: ssb
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432    
     steps:
       - name: Checkout[]
         uses: actions/checkout@v4
@@ -19,6 +35,10 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
+      - name: create database
+        run: node .github/scripts/createdb.js
+        env:
+          DBURL: "postgres://postgres:postgres@localhost:5432/postgres"
       - name: Run tests
         run: npm run test
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
@@ -26,4 +46,12 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn semantic-release
+        run: | 
+          git config --global user.email "emmanuel.florent@gmail.com"
+          git config --global user.name "DMBA"
+          yarn semantic-release
+          git fetch
+          git checkout devel
+          git pull origin devel
+          git merge --no-ff main -m "Auto-merge main back to dev"
+          git push --set-upstream origin devel

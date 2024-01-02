@@ -41,7 +41,7 @@ main() {
   done < .github/config/package_list.txt
 #  mkdir -p $DEB_POOL
 #  mkdir -p "$DEB_DISTS_COMPONENTS"
-#  cp deb-install/*.deb $DEB_DISTS_COMPONENTS
+  cp deb-install/*.deb $DEB_POOL
   GOT_DEB=1
   if [ $GOT_DEB -eq 1 ]
   then
