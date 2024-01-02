@@ -5,7 +5,7 @@ on:
       - main
   repository_dispatch:
     types: [semantic-release]
-      jobs:
+jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
