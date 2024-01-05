@@ -14,26 +14,83 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import bleno from '@abandonware/bleno';
-import {SsbBle} from './ssb-ble';
+import { exec } from "node:child_process";
+import { GetRootUserImpl } from "../use-cases/ble-conf/get-root-impl";
+import { SetRootUserImpl } from "../use-cases/ble-conf/set-root-impl";
+import { ClearRootUserImpl } from "../use-cases/ble-conf/clear-root-impl";
 
-import {SsidCharacteristic} from './ssid-characteristic';
-import { WifiPasswordCharacteristic } from './wifi-password-characteristic';
-import { RootCharacteristic } from './root-characteristic';
-import { getServiceUuid } from './ServiceDefinition';
-import { ClearRootCharacteristic } from './clear-root-characteristic';
+export class SsbBleService  {
 
+  ssid: String = "";
+  password: String ="";
+  pincode: Number = -1;
+  getRootUserUseCase: GetRootUserImpl;
+  setRootUserUseCase: SetRootUserImpl;
+  clearRootUserUseCase: ClearRootUserImpl;
 
-export class SsbBleService extends bleno.PrimaryService {
-  constructor(public ssbBle: SsbBle) {
-    super({
-      uuid: getServiceUuid('SsbRelay'),
-      characteristics: [
-        new SsidCharacteristic(ssbBle),
-        new WifiPasswordCharacteristic(ssbBle),
-        new RootCharacteristic(ssbBle),
-        new ClearRootCharacteristic(ssbBle),
-      ]
-    });
+  constructor(
+    getRootUserUseCase: GetRootUserImpl, 
+    setRootUserUseCase: SetRootUserImpl,
+    clearRootUserUseCase: ClearRootUserImpl,
+   ) {
+    this.getRootUserUseCase= getRootUserUseCase;
+    this.setRootUserUseCase= setRootUserUseCase;
+    this.clearRootUserUseCase= clearRootUserUseCase;
+    this.genPincode()
   }
+
+
+  setSsid(ssid: String) {
+    this.ssid = ssid
+    console.log(`⚠️ set ssid: ${ssid}`)
+  }
+
+  setWifiPassword(password: String, callback: any) {
+    this.password = password
+    console.log(`⚠️ set wifi password: ${password}`)
+    if (this.ssid != "" && this.password!="") {
+        const cmd =`sudo setWIFI.sh "${this.ssid}" "${this.password}"`;
+        exec(cmd, (error, stdout, stderr) => {
+          if (error) { 
+            console.error(error)
+            callback(error);
+          } else {
+            console.log(stdout)
+            callback(null);
+          }
+        });
+    }
+  }
+
+  async setRoot(root: string):Promise<void> {
+    this.setRootUserUseCase.execute(root);
+  }
+
+  async getRoot(): Promise<string> {
+    const rootUser = await  this.getRootUserUseCase.execute();
+    if (rootUser == null) return ""
+    return rootUser.key
+  }
+
+  clearRoot(pcode: Number) {
+    if (this.pincode==pcode) {
+        this.clearRootUserUseCase.execute();
+        console.warn("🔥 root owner cleared")
+    } else {
+      console.warn("⚠️ ⚠️ ⚠️  Using invalid pincode !")
+    }
+  }
+
+  async genPincode() {  
+    this.pincode = Math.floor(Math.random() * (999999 + 1))
+    let owner = await this.getRootUserUseCase.execute()
+    if (owner) {
+      console.log(`👨 owner: ${owner.key}`)
+    }  else  {
+      console.log(`🔥 please claim ownership via bluetooth`)
+    }
+    console.log(`🔥 security pincode: ${this.pincode}`)
+  }
+  
+
 };

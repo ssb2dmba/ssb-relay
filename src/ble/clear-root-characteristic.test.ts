@@ -1,7 +1,11 @@
 import { ClearRootCharacteristic } from './clear-root-characteristic';
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 import bleno from '@abandonware/bleno';
-const secretStack = require('secret-stack')
+import { GetRootUserImpl } from '../use-cases/ble-conf/get-root-impl';
+import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl';
+import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
+import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
+import { Scuttlebot } from '../types/scuttlebot-type';
 
 jest.mock('@abandonware/bleno', () => ({
   Characteristic: jest.fn(),
@@ -14,12 +18,23 @@ describe('SsidCharacteristic', () => {
 
   
   beforeEach(() => { 
-    const stack = secretStack({})
-    stack.getRoot = ()=> (
-      "root"
+    let stack = {} as any;
+    stack.getDbConnectionPool = function () {
+      return {
+        query: jest.fn().mockResolvedValue({
+          rows: [
+            { key: 'testKey' },
+          ]
+        })
+      }
+    };
+
+    let ssbBleService: SsbBleService = new SsbBleService(
+      new GetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
+      new SetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
+      new ClearRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()))
     )
-    let ssbBle: SsbBle = new SsbBle(stack);
-    clearRootCharacteristic = new ClearRootCharacteristic(ssbBle);
+    clearRootCharacteristic = new ClearRootCharacteristic(ssbBleService);
   });
 
   test('constructor', () => {

@@ -17,10 +17,13 @@
 import {scuttlebot} from './scuttlebot';
 import {setupExpressApp} from './http';
 import {createNetWorkRules} from './rules';
-import {SsbPeripheral} from './ble/peripheral';
+import {SsbBleApplication} from './ble/ssb-ble-application';
 
 
 const sbot = scuttlebot();
 createNetWorkRules(sbot)
 setupExpressApp(sbot);
-new SsbPeripheral(sbot)
+
+
+
+new SsbBleApplication(sbot)

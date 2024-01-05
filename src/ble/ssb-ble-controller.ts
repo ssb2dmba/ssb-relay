@@ -15,29 +15,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import bleno from '@abandonware/bleno';
-import { getCharacteristicUuid } from './ServiceDefinition';
-import { SsbBleService } from './ssb-ble-service';
+import {SsbBleService} from './ssb-ble-service';
+
+import {SsidCharacteristic} from './ssid-characteristic';
+import { WifiPasswordCharacteristic } from './wifi-password-characteristic';
+import { RootCharacteristic } from './root-characteristic';
+import { getServiceUuid } from './ServiceDefinition';
+import { ClearRootCharacteristic } from './clear-root-characteristic';
 
 
-export class ClearRootCharacteristic extends bleno.Characteristic {
+export class SsbBleController extends bleno.PrimaryService {
   constructor(public ssbBle: SsbBleService) {
     super({
-      uuid: getCharacteristicUuid('SsbRelay', 'clearRoot'),
-      properties: ['write'],
-      descriptors: [
-        new bleno.Descriptor({
-          uuid: '2901',
-          value: 'clear root owner'
-        })
+      uuid: getServiceUuid('SsbRelay'),
+      characteristics: [
+        new SsidCharacteristic(ssbBle),
+        new WifiPasswordCharacteristic(ssbBle),
+        new RootCharacteristic(ssbBle),
+        new ClearRootCharacteristic(ssbBle),
       ]
     });
   }
-
-  onWriteRequest(data: Buffer, offset: number, withoutResponse: boolean, callback: (result: number) => void) {
-    const pincode = data.toString();;
-    this.ssbBle.clearRoot(Number(pincode));
-    callback(this.RESULT_SUCCESS);
-  }
-
-
-}
+};

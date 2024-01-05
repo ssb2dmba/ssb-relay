@@ -1,7 +1,12 @@
 import { WifiPasswordCharacteristic } from './wifi-password-characteristic';
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 import bleno from '@abandonware/bleno';
-const secretStack = require('secret-stack')
+import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl';
+import { GetRootUserImpl } from '../use-cases/ble-conf/get-root-impl';
+import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
+import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
+import { Scuttlebot } from '../types/scuttlebot-type';
+
 
 jest.mock('@abandonware/bleno', () => ({
   Characteristic: jest.fn(),
@@ -9,30 +14,41 @@ jest.mock('@abandonware/bleno', () => ({
 }));
 
 describe('SsidCharacteristic', () => {
-  let characteristic: WifiPasswordCharacteristic ;
+  let characteristic: WifiPasswordCharacteristic;
 
 
-  
-  beforeEach(() => { 
-    const stack = secretStack({})
-    stack.getRoot = ()=> (
-      "root"
+
+  beforeEach(() => {
+    let stack = {} as any;
+    stack.getDbConnectionPool = function () {
+      return {
+        query: jest.fn().mockResolvedValue({
+          rows: [
+            { key: 'testKey' },
+          ]
+        })
+      }
+    };
+
+
+    let ssbBleService: SsbBleService = new SsbBleService(
+      new GetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
+      new SetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
+      new ClearRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()))
     )
-    stack.setRoot=jest.fn();
-    let ssbBle: SsbBle = new SsbBle(stack);
-    characteristic = new WifiPasswordCharacteristic (ssbBle);
+    characteristic = new WifiPasswordCharacteristic(ssbBleService);
   });
 
   test('constructor', () => {
     expect(characteristic).toBeInstanceOf(WifiPasswordCharacteristic);
   });
 
-  
+
   test('onWriteRequest', () => {
     const callback = jest.fn();
     const data = Buffer.from('test');
     characteristic.onWriteRequest(data, 0, false, callback);
     expect(callback).toHaveBeenCalledWith(bleno.Characteristic.RESULT_SUCCESS);
   });
-  
+
 });

@@ -1,3 +1,5 @@
+import { Pool } from "pg";
+
 export interface Scuttlebot {
     emit: Function;
     last: {
@@ -112,5 +114,6 @@ export interface Scuttlebot {
     },
     setRoot: Function,
     getRoot: Function,
-    clearRoot: Function
+    clearRoot: Function,
+    getDbConnectionPool: Function
   }

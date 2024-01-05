@@ -1,10 +1,10 @@
 import bleno from '@abandonware/bleno';
 import { getCharacteristicUuid } from './ServiceDefinition';
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 import { exec } from "node:child_process";
 
 export class WifiPasswordCharacteristic  extends bleno.Characteristic {
-    constructor(public ssbBle: SsbBle) {
+    constructor(public ssbBle: SsbBleService) {
       super({
         uuid: getCharacteristicUuid('SsbRelay', 'ssid'),
         properties: ['read', 'write'],

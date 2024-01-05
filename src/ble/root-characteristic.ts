@@ -16,11 +16,11 @@
  */
 import bleno from '@abandonware/bleno';
 import { getCharacteristicUuid } from './ServiceDefinition';
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 
 
 export class RootCharacteristic extends bleno.Characteristic {
-    constructor(public ssbBle: SsbBle) {
+    constructor(public ssbBleService: SsbBleService) {
       super({
         uuid: getCharacteristicUuid('SsbRelay', 'root'),
         properties: ['read', 'write'],
@@ -33,18 +33,18 @@ export class RootCharacteristic extends bleno.Characteristic {
       });
     }
   
-    onWriteRequest(data: Buffer, offset: number, withoutResponse: boolean, callback: (result: number) => void) {
-        const root = data.toString(); ;
-        this.ssbBle.setRoot(root)
+    async onWriteRequest(data: Buffer, offset: number, withoutResponse: boolean, callback: (result: number) => void) {
+        const root = data.toString(); 
+        this.ssbBleService.setRoot(root);
         callback(this.RESULT_SUCCESS);
     }
 
     onReadRequest(offset: number, callback: (result: number, data?: Buffer | undefined) => void): void {
-      this.ssbBle.getRoot((err: any, root: any) => {
+      this.ssbBleService.getRoot().then((root) => {  
         callback(this.RESULT_SUCCESS, Buffer.from(root));
-      })
-
-    }
-
+      }).catch((error) => {
+        console.error(error)
+        callback(this.RESULT_UNLIKELY_ERROR);
+      });
   };
-  
+}
