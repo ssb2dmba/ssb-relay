@@ -28,6 +28,8 @@
     "@types/pull-stream": "^3.6.7",
     "@types/ssb-keys": "^7.2.3",
     "@types/supertest": "^6.0.2",
+    "@types/express-session": "^1.17.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "babel-jest": "^29.7.0",
     "cont": "^1.0.3",
     "explain-error": "^1.0.4",
@@ -49,8 +51,6 @@
   },
   "dependencies": {
     "@abandonware/bleno": "~0.5.1-4",
-    "@types/express-session": "^1.17.6",
-    "@types/jsonwebtoken": "^9.0.5",
     "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
