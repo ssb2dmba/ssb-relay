@@ -14,29 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-const {Pool} = require("pg"); // Client import is req.
 
-module.exports = function init(db) {
+module.exports = function implementation(db) {
 
-    let lockable = async function (pool) {
-        const client = await pool.connect();
-        console.log(`Postgres is online  at ${client.user}@${client.host}/${client.database}`)
-        client.release();
+    db.getDbConnectionPool = function () {
+        return db.pool;
     }
-    if (!db.opts) db.opts = {}
-    const credentials = db.opts.postgres ||  {
-        "user": "ssb",
-        "host": "localhost",
-        "database": "ssb",
-        "password": "ssb",
-        "port": 5432
-    }
-
-    db.pool = new Pool(credentials);
-
-    // await for the pool to be up
-    lockable(db.pool).then(() => {
-        // do nothing
-    })
     return db;
+
 }

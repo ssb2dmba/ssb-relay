@@ -58,6 +58,5 @@ module.exports = function create(path, opts, keys) {
             keys: keys
         }
     }
-
     return db
 }

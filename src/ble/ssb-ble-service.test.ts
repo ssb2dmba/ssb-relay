@@ -1,6 +1,4 @@
-import { SsidCharacteristic } from './ssid-characteristic';
 import { SsbBleService } from './ssb-ble-service';
-import bleno from '@abandonware/bleno';
 import { GetRootUserImpl } from '../use-cases/ble-conf/get-root-impl';
 import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl';
 import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
@@ -8,17 +6,11 @@ import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
 import { Scuttlebot } from '../types/scuttlebot-type';
 
 
-jest.mock('@abandonware/bleno', () => ({
-  Characteristic: jest.fn(),
-  Descriptor: jest.fn(),
-}));
+describe('SsbBleService', () => {
+  let ssbBle: SsbBleService;
+  let stack: any;
 
-describe('SsidCharacteristic', () => {
-  let ssidCharacteristic: SsidCharacteristic;
-
-
-  
-  beforeEach(() => { 
+  beforeEach(() => {
     let stack = {} as any;
     stack.getDbConnectionPool = function () {
       return {
@@ -29,26 +21,33 @@ describe('SsidCharacteristic', () => {
         })
       }
     };
-
-
-    let ssbBleService: SsbBleService = new SsbBleService(
+    stack.getRoot = jest.fn().mockReturnValue("root");
+    ssbBle  = new SsbBleService(
       new GetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
       new SetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
       new ClearRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()))
     )
-    ssidCharacteristic = new SsidCharacteristic(ssbBleService);
   });
 
-  test('constructor', () => {
 
-    expect(ssidCharacteristic).toBeInstanceOf(SsidCharacteristic);
+
+  test('genPincode', () => {
+    ssbBle.genPincode();
+    expect(ssbBle.pincode).toBeGreaterThanOrEqual(0);
+    expect(ssbBle.pincode).toBeLessThanOrEqual(999999);
   });
 
-  
-  test('onWriteRequest', () => {
-    const callback = jest.fn();
-    const data = Buffer.from('test');
-    ssidCharacteristic.onWriteRequest(data, 0, false, callback);
-    expect(callback).toHaveBeenCalledWith(bleno.Characteristic.RESULT_SUCCESS);
+  test('clearRoot with valid pincode', () => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    ssbBle.pincode = 123456;
+    ssbBle.clearRoot(123456);
+    expect(warn).toHaveBeenCalledWith("🔥 root owner cleared");
+  });
+
+  test('clearRoot with invalid pincode', () => {
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    ssbBle.pincode = 123456;
+    ssbBle.clearRoot(654321);
+    expect(warn).toHaveBeenCalledWith("⚠️ ⚠️ ⚠️  Using invalid pincode !");
   });
 });

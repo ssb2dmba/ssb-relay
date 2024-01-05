@@ -43,7 +43,7 @@ Type=forking
 User=ssb
 
 ExecStart=/usr/local/bin/run_electrum_nmc daemon --rpcsock tcp --rpcport 7777 -d
-ExecStartPost=sleep 30 && /usr/local/bin/run_electrum_nmc load_wallet
+ExecStartPost=/usr/local/bin/run_electrum_nmc load_wallet
 Restart=always
 RestartSec=10 
 SyslogIdentifier=electrum_nmc
@@ -57,8 +57,7 @@ ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.ta
 su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb
 su -c "/usr/local/bin/run_electrum_nmc create" ssb || echo "WARN: Failed to create default electrum wallet"
 su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
-systemctl daemon-reload
-systemctl start electrum_nmc
+
 
 # Postgres database setup
 su - postgres -c "psql template1 -c 'create database ssb'" || echo "WARN: Failed to create ssb database"
@@ -77,7 +76,7 @@ HiddenServicePort 80 127.0.0.1:8000
 HiddenServicePort 8008 127.0.0.1:8008
 EOF
 fi
-systemctl restart tor
+
 
 ONION=`cat /var/lib/tor/ssb/hostname`
 
@@ -132,6 +131,7 @@ fi
 
 
 systemctl daemon-reload
-
-systemctl restart pm2-ssb
+systemctl start electrum_nmc
+systemctl start pm2-ssb
+systemctl restart tor
 

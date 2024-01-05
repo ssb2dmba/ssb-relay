@@ -49,7 +49,6 @@ module.exports = {
         // main interface
         const ssb = create(opts.path, opts, opts.keys);
         ssb.sbot=server
-
         //treat the main feed as remote, because it's likely handled like that by others.
         const feed = ssb.createFeed(opts.keys, {remote: true});
         return self = {
@@ -80,9 +79,7 @@ module.exports = {
                 isFollowing: ssb.isFollowing
             },
             emit: ssb.sbot.emit,
-            setRoot: ssb.setRoot,
-            getRoot: ssb.getRoot,
-            clearRoot: ssb.clearRoot
+            getDbConnectionPool: ssb.getDbConnectionPool
         }
     }
 }
