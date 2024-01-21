@@ -34,7 +34,7 @@ jobs:
           do
             sleep 1
           done
-          sudo apt install -y jq createrepo-c coreutils gnupg2 dpkg-dev git nodejs libsodium-dev dpkg fakeroot jq
+          sudo apt install -y jq createrepo-c coreutils gnupg2 dpkg-dev git nodejs libsodium-dev dpkg fakeroot jq bluetooth bluez
 
       - name: Insert environment variables
         id: env_config
