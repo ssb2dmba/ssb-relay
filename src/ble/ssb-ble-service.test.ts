@@ -14,7 +14,7 @@ describe('SsbBleService', () => {
 
   beforeEach(() => {
     console.log(process.env)
-    if (process.env["GITHUB_ACTIONS"]) return;
+    if (process.env["GITHUB_ACTION"]) return;
     let stack = {} as any;
     stack.getDbConnectionPool = function () {
       return {
