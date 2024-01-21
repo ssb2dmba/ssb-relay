@@ -25,12 +25,12 @@ process.env.BLENO_DEVICE_NAME = name;
 // * setSsid
 // * ...
 //
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 
 //
 // The BLE Service!
 //
-import { SsbBleService } from './ssb-ble-service';
+import { SsbBleController } from './ssb-ble-controller';
 
 //
 // A name to advertise our Service.
@@ -43,14 +43,26 @@ import { SsbBleService } from './ssb-ble-service';
 //
 import bleno from '@abandonware/bleno';
 import { Scuttlebot } from '../types/scuttlebot-type';
+import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl';
+import { GetRootUserImpl } from '../use-cases/ble-conf/get-root-impl';
+import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
+import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
+import { GetIpAdressImpl } from '../use-cases/ble-conf/get-ip-addr';
+import { GetOnionAdressImpl } from '../use-cases/ble-conf/get-onion-addr';
 
-export class SsbPeripheral {
+export class SsbBleApplication {
 
   constructor(sbot: Scuttlebot) {
 
-    const ssbBleService = new SsbBleService(new SsbBle(sbot));
+    const ssbBleController = new SsbBleController(
+      new SsbBleService(
+        new GetRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
+        new SetRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
+        new ClearRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
+        new GetIpAdressImpl(),
+        new GetOnionAdressImpl()
+    ));
     
-
     //
     // Wait until the BLE radio powers on before attempting to advertise.
     // If you don't have a BLE radio, then it will never power on!
@@ -61,11 +73,11 @@ export class SsbPeripheral {
         // We will also advertise the service ID in the advertising packet,
         // so it's easier to find.
         //
-        bleno.startAdvertising(name, [ssbBleService.uuid], function (err) {
+        bleno.startAdvertising(name, [ssbBleController.uuid], function (err) {
           if (err) {
             console.log(err);
           } else {
-            console.log(`👍 Begin advertising '${name}'`);
+            console.log(` \x1b[34mᛒ\x1b[0m Bluetooth advertising '${name}'`);
           }
         });
       }
@@ -82,25 +94,13 @@ export class SsbPeripheral {
         // along with our characteristics.
         //
         bleno.setServices([
-          ssbBleService
+          ssbBleController
         ]);
       } else {
         console.warn("Error advertising: ", err);
       }
     });
-
-    // bleno.on("accept", address => console.log("Accept", address));
-    // bleno.on("addressChange", address => console.log("addressChange", address));
-    // bleno.on("advertisingStart", err => console.log("Advertising... ", err));
-    // bleno.on("advertisingStartError", err => console.log("Advertising start error", err));
-    // bleno.on("advertisingStop", () => console.log("Advertising Stop"));
-    // bleno.on("disconnect", address => console.log(`Disconnect from ${address}`));
-    // bleno.on("mtuChange", mtu => console.log("New MTU", mtu));
-    // bleno.on('platform', platform => console.log(`Platform: ${platform}`));
-    // bleno.on("rssiUpdate", rssi => console.log(`RSSI: ${rssi}`));
-    // bleno.on("servicesSet", err => console.log(`Services set ${err}`, err));
-    // bleno.on("servicesSetError", err => console.log(`Services set err:`, err));
-    // bleno.on("stateChange", newState => console.log("State Change", newState));
-
+    bleno.on("servicesSetError", err => console.log(`Services set err:`, err));
+    bleno.on("advertisingStartError", err => console.log("Advertising start error", err));
   }
 }

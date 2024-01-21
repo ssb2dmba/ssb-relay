@@ -16,11 +16,11 @@
  */
 import bleno from '@abandonware/bleno';
 import { getCharacteristicUuid } from './ServiceDefinition';
-import { SsbBle } from './ssb-ble';
+import { SsbBleService } from './ssb-ble-service';
 
 
 export class ClearRootCharacteristic extends bleno.Characteristic {
-  constructor(public ssbBle: SsbBle) {
+  constructor(public ssbBle: SsbBleService) {
     super({
       uuid: getCharacteristicUuid('SsbRelay', 'clearRoot'),
       properties: ['write'],

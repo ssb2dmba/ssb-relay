@@ -14,16 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import {scuttlebot} from './scuttlebot';
-import {setupExpressApp} from './http';
-import {createNetWorkRules} from './rules';
-import {SsbBleApplication} from './ble/ssb-ble-application';
+import bleno from '@abandonware/bleno';
+import { getCharacteristicUuid } from './ServiceDefinition';
+import { SsbBleService } from './ssb-ble-service';
 
 
-const sbot = scuttlebot();
-createNetWorkRules(sbot)
-setupExpressApp(sbot);
+export class Wlan0Characteristic extends bleno.Characteristic {
 
+    constructor(public ssbBle: SsbBleService) {
+      super({
+        uuid: getCharacteristicUuid('SsbRelay', 'wlan0'),
+        properties: ['read'],
+        descriptors: [
+          new bleno.Descriptor({
+            uuid: '2901',
+            value: 'wlan0'
+          })
+        ]
+      });
+    }
+  
 
-
-new SsbBleApplication(sbot)
+    onReadRequest(offset: number, callback: (result: number, data?: Buffer | undefined) => void): void {
+      const ipInfo = this.ssbBle.getWlan0(callback);
+    }
+  };

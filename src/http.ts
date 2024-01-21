@@ -14,15 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import express, { Express, Request, response, Response } from 'express';
+import express, { Request, Response } from 'express';
+import * as crypto from 'crypto';
 import { Scuttlebot } from './types/scuttlebot-type';
+import { VerifyAuthChallengeImpl } from './use-cases/auth/verify-auth-challenge-impl';
+import { CreateAuthChallengeImpl } from './use-cases/auth/create-auth-challenge-impl';
+import { RootUserRepositoryImpl } from './repository/root-user-repository-impl';
+import AuthRouter from './routers/auth-router';
 
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const mustacheExpress = require('mustache-express');
-const svgCaptcha  = require('svg-captcha');
-const pull = require("pull-stream");
-
+import  session  from 'express-session'
+import cookieParser from 'cookie-parser';
+import mustacheExpress from 'mustache-express';
+import svgCaptcha  from 'svg-captcha';
+import pull from 'pull-stream';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { homedir } from 'os'
 
 declare module 'express-session' { 
     interface SessionData {
@@ -37,7 +44,9 @@ export function setupExpressApp(bot: Scuttlebot) {
     const app = express();
     app.use(express.static(__dirname + '/public'));
     app.use(require('body-parser').urlencoded({ extended: true }));
-    app.use(cookieParser("Your secret key"));
+    const md5fn = (contents: string) => crypto.createHash('md5').update(contents).digest("hex");
+    const secret = md5fn( readFileSync(join(homedir(),".ssb", "secret"), 'utf-8'));
+    app.use(cookieParser(secret));
     app.use(session());
 
     app.set('views', `${__dirname}/views`);
@@ -102,9 +111,15 @@ export function setupExpressApp(bot: Scuttlebot) {
         });
 
     });
+    
+    const authMiddleWare = AuthRouter(
+        new CreateAuthChallengeImpl(new RootUserRepositoryImpl(bot.getDbConnectionPool())),
+        new VerifyAuthChallengeImpl(new RootUserRepositoryImpl(bot.getDbConnectionPool()))
+    )
+    app.use('/auth', authMiddleWare) //.default(bot));
 
     return app.listen(app.get('port'), () => {
-        console.log('Web app is running on port %s', app.get('port'));
+        console.log('🌐 Web app is running on port %s', app.get('port'));
     });
 
     function reportIfError(err: any) {

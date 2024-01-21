@@ -31,10 +31,13 @@ module.exports = function create(path, opts, keys) {
     db = require('./api/last.js')(db)
     db = require('./api/friends.js')(db)
     db = require('./api/did.js')(db)
-    db = require('./api/root.js')(db)
+    db = require('./api/pool.js')(db)
     
     db.createFeed = function (keys) {
-        if (!keys) throw Error()
+        if (!keys) { 
+            console.error("createFeed: no keys found in ~/.ssb/ ?")
+            throw Error()
+        }
 
         //if (!keys) keys = ssbKeys.generate()
         function add(content, cb) {
@@ -58,6 +61,5 @@ module.exports = function create(path, opts, keys) {
             keys: keys
         }
     }
-
     return db
 }
