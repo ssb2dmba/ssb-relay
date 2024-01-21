@@ -6,14 +6,14 @@ import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
 import { Scuttlebot } from '../types/scuttlebot-type';
 import { GetOnionAdressImpl } from '../use-cases/ble-conf/get-onion-addr';
 import { GetIpAdressImpl } from '../use-cases/ble-conf/get-ip-addr';
-
+import bleno from '@abandonware/bleno';
+jest.mock('@abandonware/bleno');
 
 describe('SsbBleService', () => {
   let ssbBle: SsbBleService;
   let stack: any;
 
   beforeEach(() => {
-    console.log(process.env)
     if (process.env["GITHUB_ACTION"]) return;
     let stack = {} as any;
     stack.getDbConnectionPool = function () {
