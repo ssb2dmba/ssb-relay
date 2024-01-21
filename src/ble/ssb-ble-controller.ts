@@ -22,7 +22,9 @@ import { WifiPasswordCharacteristic } from './wifi-password-characteristic';
 import { RootCharacteristic } from './root-characteristic';
 import { getServiceUuid } from './ServiceDefinition';
 import { ClearRootCharacteristic } from './clear-root-characteristic';
-
+import { Wlan0Characteristic } from './wlan0-characteristic';
+import { Eth0Characteristic } from './eth0-characteristic';
+import { OnionCharacteristic } from './onion-characteristic';
 
 export class SsbBleController extends bleno.PrimaryService {
   constructor(public ssbBle: SsbBleService) {
@@ -33,6 +35,9 @@ export class SsbBleController extends bleno.PrimaryService {
         new WifiPasswordCharacteristic(ssbBle),
         new RootCharacteristic(ssbBle),
         new ClearRootCharacteristic(ssbBle),
+        new Eth0Characteristic(ssbBle),
+        new Wlan0Characteristic(ssbBle),
+        new OnionCharacteristic(ssbBle),
       ]
     });
   }

@@ -4,6 +4,8 @@ import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl'
 import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
 import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
 import { Scuttlebot } from '../types/scuttlebot-type';
+import { GetOnionAdressImpl } from '../use-cases/ble-conf/get-onion-addr';
+import { GetIpAdressImpl } from '../use-cases/ble-conf/get-ip-addr';
 
 
 describe('SsbBleService', () => {
@@ -25,7 +27,9 @@ describe('SsbBleService', () => {
     ssbBle  = new SsbBleService(
       new GetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
       new SetRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
-      new ClearRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()))
+      new ClearRootUserImpl(new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool())),
+      new GetIpAdressImpl(),
+      new GetOnionAdressImpl()
     )
   });
 

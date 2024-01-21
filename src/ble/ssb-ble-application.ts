@@ -47,6 +47,8 @@ import { RootUserRepositoryImpl } from '../repository/root-user-repository-impl'
 import { GetRootUserImpl } from '../use-cases/ble-conf/get-root-impl';
 import { SetRootUserImpl } from '../use-cases/ble-conf/set-root-impl';
 import { ClearRootUserImpl } from '../use-cases/ble-conf/clear-root-impl';
+import { GetIpAdressImpl } from '../use-cases/ble-conf/get-ip-addr';
+import { GetOnionAdressImpl } from '../use-cases/ble-conf/get-onion-addr';
 
 export class SsbBleApplication {
 
@@ -56,7 +58,9 @@ export class SsbBleApplication {
       new SsbBleService(
         new GetRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
         new SetRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
-        new ClearRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool()))
+        new ClearRootUserImpl(new RootUserRepositoryImpl(sbot.getDbConnectionPool())),
+        new GetIpAdressImpl(),
+        new GetOnionAdressImpl()
     ));
     
     //
