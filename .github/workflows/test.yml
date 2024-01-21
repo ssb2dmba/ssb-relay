@@ -46,7 +46,7 @@ jobs:
             do
               sleep 1
             done
-            sudo apt install -y libsodium-dev
+            sudo apt install -y libsodium-dev bluetooth bluez
 
 
       - name: Install dependencies
