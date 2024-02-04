@@ -54,23 +54,10 @@ module.exports = function (keys, opts) {
           !isSupportedHash(msg)
         )
           return new Error('message has invalid properties:'+JSON.stringify(msg, null, 2))
-      
-        //allow encrypted messages, where content is a base64 string.
-      
-        //NOTE: since this checks the length of javascript string,
-        //it's not actually the byte length! it's the number of utf8 chars
-        //for latin1 it's gonna be 8k, but if you use all utf8 you can
-        //approach 32k. This is a weird legacy thing, obviously, that
-        //we will fix at some point...
-        // var asJson = encode(msg)
-        // if (asJson.length > 8192) // 8kb
-        //   return new Error('Encoded message must not be larger than 8192 bytes. Current size is '+asJson.length)
 
-        // The size of a high definition mobile phone photograph can vary greatly depending on several factors such as 
-        // the camera's megapixel count, the image format (JPEG, RAW, etc.), and the level of detail in the image. 
-        // However, as a general estimate, a high definition photograph taken on a mobile phone can range from 1,000 KB (1 MB) 
-        // to 4,000 KB (4 MB) or more. This is just a rough estimate and the actual size can be outside of this range.
-      
+         if (msg.length > 1048576)
+           return new Error('Message must not be larger than 1Mo. Current size is '+ msg.length)
+
         return isInvalidContent(msg.content)
       }
       
