@@ -82,8 +82,7 @@ jobs:
           destination: ./_site
           verbose: true
 
-      - name: Set permissions on the _site directory
-        run: sudo chown -R runner:docker _site 
+
 
       - name: Build Debian repository
         run: |
@@ -91,7 +90,8 @@ jobs:
           export ORIGIN="${{ steps.import_gpg.outputs.name }}"
           .github/scripts/build_repos.sh   
 
-         
+      - name: Set permissions on the _site directory
+        run: sudo chown -R runner:docker _site          
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -105,4 +105,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
