@@ -82,7 +82,8 @@ jobs:
           destination: ./_site
           verbose: true
 
-
+      - name: Set permissions on the _site directory
+        run: sudo chown -R runner:docker _site      
 
       - name: Build Debian repository
         run: |
