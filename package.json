@@ -1,12 +1,12 @@
 {
   "name": "ssb-relay",
-  "version": "1.6.0",
+  "version": "0.0.1-development",
   "description": "a SecureScuttlebut relay server",
   "private": true,
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/tape src/sbot/test/*.js && ./node_modules/.bin/jest",
-    "build": "tsc && cp -r src/views dist && cp -r src/sbot dist/src && cp -r package.json dist ",
+    "build": "tsc && cp -r src/views dist/src && cp -r src/sbot dist/src && cp -r package.json dist ",
     "start": "npm run clean && npm run build && node dist/src/index",
     "serve": "node_modules/.bin/pm2 start node dist/index.js",
     "semantic-release": "semantic-release",

@@ -108,9 +108,7 @@ WantedBy=multi-user.target
 EOF
 fi
 
-if [ ! -f /etc/systemd/system/multi-user.target.wants/pm2-ssb.service ]; then
-  ln -s /etc/systemd/system/pm2-ssb.service /etc/systemd/system/multi-user.target.wants/pm2-ssb.service
-fi 
+env PATH=$PATH:/usr/bin /usr/local/ssb-relay/node_modules/pm2/bin/pm2 startup systemd -u ssb --hp /home/ssb
 
 mkdir -p /home/ssb/.ssb
 cp /usr/local/ssb-relay/config.example /home/ssb/.ssb/config
@@ -122,15 +120,14 @@ sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
 
 # rebuild BLE driver on the target platform
 cd /usr/local/ssb-relay/node_modules/@abandonware/bluetooth-hci-socket
-npm run install
-
+../../.bin/node-pre-gyp clean rebuild
 # allow sudo script
 # relay startup script
-if [ ! -f /etc/sudoers.d/iw ]; then
-  cat << EOF >> /etc/sudoers.d/iw
-%ssb ALL = (root) NOPASSWD: scanWIFI.sh
-%ssb ALL = (root) NOPASSWD: setWIFI.sh
-%ssb ALL = (root) NOPASSWD: cat /etc/network/interfaces.d/wlan0
+if [ ! -f /etc/sudoers.d/ssb ]; then
+  cat << EOF >> /etc/sudoers.d/ssb
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/scanWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/setWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/bin/cat /etc/network/interfaces.d/wlan0
 EOF
 fi
 

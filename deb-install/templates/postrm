@@ -2,15 +2,17 @@
 set -e
 
 
-remove_electrum_bin_link() {
+remove_added_files() {
+  rm /etc/sudoers.d/ssb || true
   rm /usr/local/Electrum-NMC/electrum_nmc/electrum/libsecp256k1.so.0 || true 
+  rm -fr /usr/local/ssb-relay || true
 }
 
 case "$1" in
-  upgrade|remove|failed-upgrade|abort-upgrade|abort-install|disappear)
+  upgrade|failed-upgrade|abort-upgrade|abort-install)
     ;;
-  purge)
-    remove_electrum_bin_link
+  purge|remove|disappear)
+    remove_added_files
     ;;
   *)
     echo "postinst called with unknown argument '$1'"
