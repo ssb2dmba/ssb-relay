@@ -108,13 +108,7 @@ WantedBy=multi-user.target
 EOF
 fi
 
-#d node_modules/@abandonware/bluetooth-hci-socket/
-#../../.bin/node-pre-gyp clean rebuild
-#env PATH=$PATH:/usr/bin /usr/local/ssb-relay/node_modules/pm2/bin/pm2 startup systemd -u ssb --hp /home/ssb
-
-if [ ! -f /etc/systemd/system/multi-user.target.wants/pm2-ssb.service ]; then
-  ln -s /etc/systemd/system/pm2-ssb.service /etc/systemd/system/multi-user.target.wants/pm2-ssb.service
-fi 
+env PATH=$PATH:/usr/bin /usr/local/ssb-relay/node_modules/pm2/bin/pm2 startup systemd -u ssb --hp /home/ssb
 
 mkdir -p /home/ssb/.ssb
 cp /usr/local/ssb-relay/config.example /home/ssb/.ssb/config
