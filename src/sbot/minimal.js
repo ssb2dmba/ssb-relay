@@ -43,6 +43,39 @@ module.exports = function (keys, opts) {
     // no sequence validation !
     // no previous check !
     var ref = require('ssb-ref')
+
+    V.isInvalidShape = exports.isInvalidShape = function (msg) {
+        if(
+          !isObject(msg) ||
+          !isInteger(msg.sequence) ||
+          !isFeedId(msg.author) ||
+          !(isObject(msg.content) || isEncrypted(msg.content)) ||
+          !isValidOrder(msg, false) || //false, because message may not be signed yet.
+          !isSupportedHash(msg)
+        )
+          return new Error('message has invalid properties:'+JSON.stringify(msg, null, 2))
+      
+        //allow encrypted messages, where content is a base64 string.
+      
+        //NOTE: since this checks the length of javascript string,
+        //it's not actually the byte length! it's the number of utf8 chars
+        //for latin1 it's gonna be 8k, but if you use all utf8 you can
+        //approach 32k. This is a weird legacy thing, obviously, that
+        //we will fix at some point...
+        // var asJson = encode(msg)
+        // if (asJson.length > 8192) // 8kb
+        //   return new Error('Encoded message must not be larger than 8192 bytes. Current size is '+asJson.length)
+
+        // The size of a high definition mobile phone photograph can vary greatly depending on several factors such as 
+        // the camera's megapixel count, the image format (JPEG, RAW, etc.), and the level of detail in the image. 
+        // However, as a general estimate, a high definition photograph taken on a mobile phone can range from 1,000 KB (1 MB) 
+        // to 4,000 KB (4 MB) or more. This is just a rough estimate and the actual size can be outside of this range.
+      
+        return isInvalidContent(msg.content)
+      }
+      
+
+
     V.checkInvalidCheap = function (state, msg) {
         //the message is just invalid
         if (!ref.isFeedId(msg.author))
@@ -51,6 +84,8 @@ module.exports = function (keys, opts) {
             return new Error('invalid message: signature type must match author type')
         return V.isInvalidShape(msg)
     }
+
+    
 
     var flush = new u.AsyncJobQueue() // doesn't currenlty use async-done
 
