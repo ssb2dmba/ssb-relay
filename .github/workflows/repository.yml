@@ -88,11 +88,11 @@ jobs:
       - name: Set permissions on the _site directory
         run: sudo chown -R runner:docker _site      
 
-      - name: Build Debian repository
-        run: |
-          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repos.sh   
+      # - name: Build Debian repository
+      #   run: |
+      #     export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
+      #     export ORIGIN="${{ steps.import_gpg.outputs.name }}"
+      #     .github/scripts/build_repos.sh   
 
       - name: Set permissions on the _site directory
         run: sudo chown -R runner:docker _site          
