@@ -7,6 +7,7 @@ import { Scuttlebot } from '../types/scuttlebot-type';
 import { GetOnionAdressImpl } from '../use-cases/ble-conf/get-onion-addr';
 import { GetIpAdressImpl } from '../use-cases/ble-conf/get-ip-addr';
 
+
 jest.mock('@abandonware/bleno');
 
 describe('SsbBleService', () => {

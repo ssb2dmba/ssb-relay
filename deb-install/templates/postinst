@@ -127,8 +127,6 @@ sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
 # rebuild BLE driver on the target platform
 cd /usr/local/ssb-relay/node_modules/@abandonware/bluetooth-hci-socket
 ../../.bin/node-pre-gyp clean rebuild
-
-
 # allow sudo script
 # relay startup script
 if [ ! -f /etc/sudoers.d/iw ]; then
