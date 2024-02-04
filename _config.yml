@@ -10,6 +10,9 @@ github_username: ssb2dmba
 theme: minima
 plugins:
   - jekyll-feed
+include:
+  - dmba.pgp
+  - dmba.asc
 exclude:
   - src/
   - deb-install/
