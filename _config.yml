@@ -11,7 +11,7 @@ theme: minima
 plugins:
   - jekyll-feed
 include:
-  - dmba.pgp
+  - dmba.gpg
   - dmba.asc
 exclude:
   - src/
