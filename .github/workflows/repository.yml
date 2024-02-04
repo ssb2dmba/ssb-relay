@@ -2,7 +2,7 @@ name: Deploy Debian and RPM Repo plus Jekyll homepage
 
 on:
   push:
-    branches: ["main", "devel"]
+    branches: ["main", "devel", "feat/fix-repos"]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -89,7 +89,7 @@ jobs:
         run: sudo chown -R runner:docker _site          
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
 
   deploy:
     environment:

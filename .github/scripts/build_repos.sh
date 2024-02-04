@@ -72,7 +72,10 @@ main() {
     gpg --detach-sign --armor --sign > Release.gpg < Release
     gpg --detach-sign --armor --sign --clearsign > InRelease < Release
     echo "$DEB_POOL DEB repo built"
+    pwd
+    ls
     popd >/dev/null
   fi
 }
 main
+ls -lR
