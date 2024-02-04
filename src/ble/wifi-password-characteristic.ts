@@ -11,7 +11,7 @@ export class WifiPasswordCharacteristic  extends bleno.Characteristic {
         descriptors: [
           new bleno.Descriptor({
             uuid: '2901',
-            value: 'SSID'
+            value: 'wifi password'
           })
         ]
       });

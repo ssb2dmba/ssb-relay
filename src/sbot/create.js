@@ -34,7 +34,10 @@ module.exports = function create(path, opts, keys) {
     db = require('./api/pool.js')(db)
     
     db.createFeed = function (keys) {
-        if (!keys) throw Error()
+        if (!keys) { 
+            console.error("createFeed: no keys found in ~/.ssb/ ?")
+            throw Error()
+        }
 
         //if (!keys) keys = ssbKeys.generate()
         function add(content, cb) {

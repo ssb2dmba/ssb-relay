@@ -46,7 +46,7 @@ jobs:
             do
               sleep 1
             done
-            sudo apt install -y libsodium-dev
+            sudo apt install -y libsodium-dev bluetooth bluez
 
 
       - name: Install dependencies
@@ -63,3 +63,4 @@ jobs:
         run: npm run test
         env:
           DBURL: postgres://postgres:postgres@localhost:5432/postgres
+          GITHUB_ACTIONS: true

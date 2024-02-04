@@ -13,8 +13,8 @@ node_deb_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 # functions
 #
 install_relay_from_source() {
-  mkdir -p "$node_deb_dir/sysroot/etc/postgresql/15/main/postgresql.conf"
-  cp "$node_deb_dir/assets/postgresql.conf" "$node_deb_dir/sysroot/etc/postgresql/15/main/postgresql.conf"
+  #mkdir -p "$node_deb_dir/sysroot/etc/postgresql/15/main/postgresql.conf"
+  #cp "$node_deb_dir/assets/postgresql.conf" "$node_deb_dir/sysroot/etc/postgresql/15/main/postgresql.conf"
   mkdir -p "$node_deb_dir/sysroot/usr/local/"
   cd "$node_deb_dir/sysroot/usr/local/"
   git clone https://github.com/ssb2dmba/ssb-relay --branch "$branch"
