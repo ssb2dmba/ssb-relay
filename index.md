@@ -1,6 +1,6 @@
 ---
 layout: home
-title: ssb-relay: an SecureScuttlebut (SSB) home server
+title: ssb-relay: A SecureScuttlebut (SSB) home server
 ---
 A Secure Scuttlebutt (SSB) relay server is an entry point for accessing the SSB network. It is an instance that operates the Secret Handshake and SSB protocol. Plus some SSB Protocol Improvements Proposals aimed at making the network useful and friendly.
 Users can register on one or more shared instances.
@@ -52,7 +52,7 @@ Currently these are:
 
 Please contribute changes and bug reports in the relevant repository above.
 
-Have a security issue? Please email [Jon](mailto:emmanuel.florent@gmail.com) with details.
+Have a security issue? Please email [Emmanuel Florent](mailto:emmanuel.florent@gmail.com) with details.
 
 Have your own feature? Please create a 
 [pull request on this repository](https://github.com/ssb2dmba/ssb-relay/pulls).
