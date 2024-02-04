@@ -70,20 +70,25 @@ jobs:
           gpg --list-keys
           echo "${{ steps.import_gpg.outputs.fingerprint }}"
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+
 
       - name: Build Debian repository
         run: |
           export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
           export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repos.sh      
+          .github/scripts/build_repos.sh   
+          ls -lah
+          ls -lah _site/deb/   
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
+          verbose: true
 
       - name: Set permissions on the _site directory
         run: sudo chown -R runner:docker _site          
@@ -100,4 +105,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

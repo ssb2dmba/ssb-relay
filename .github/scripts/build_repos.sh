@@ -78,4 +78,3 @@ main() {
   fi
 }
 main
-ls -lR
