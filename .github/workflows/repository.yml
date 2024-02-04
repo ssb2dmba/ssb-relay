@@ -2,7 +2,7 @@ name: Deploy Debian and RPM Repo plus Jekyll homepage
 
 on:
   push:
-    branches: ["main", "devel"]
+    branches: ["main", "devel", "feat/fix-repos"]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -70,26 +70,31 @@ jobs:
           gpg --list-keys
           echo "${{ steps.import_gpg.outputs.fingerprint }}"
 
+
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
-
-      - name: Build Debian repository
-        run: |
-          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
-          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
-          .github/scripts/build_repos.sh      
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
+          verbose: true
 
       - name: Set permissions on the _site directory
-        run: sudo chown -R runner:docker _site          
+        run: sudo chown -R runner:docker _site 
+
+      - name: Build Debian repository
+        run: |
+          export GPG_FINGERPRINT="${{ steps.import_gpg.outputs.fingerprint }}"
+          export ORIGIN="${{ steps.import_gpg.outputs.name }}"
+          .github/scripts/build_repos.sh   
+
+         
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
 
   deploy:
     environment:
@@ -100,4 +105,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
