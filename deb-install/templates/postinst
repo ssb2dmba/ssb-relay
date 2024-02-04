@@ -123,11 +123,11 @@ cd /usr/local/ssb-relay/node_modules/@abandonware/bluetooth-hci-socket
 ../../.bin/node-pre-gyp clean rebuild
 # allow sudo script
 # relay startup script
-if [ ! -f /etc/sudoers.d/iw ]; then
-  cat << EOF >> /etc/sudoers.d/iw
-%ssb ALL = (root) NOPASSWD: scanWIFI.sh
-%ssb ALL = (root) NOPASSWD: setWIFI.sh
-%ssb ALL = (root) NOPASSWD: cat /etc/network/interfaces.d/wlan0
+if [ ! -f /etc/sudoers.d/ssb ]; then
+  cat << EOF >> /etc/sudoers.d/ssb
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/scanWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/setWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/bin/cat /etc/network/interfaces.d/wlan0
 EOF
 fi
 
