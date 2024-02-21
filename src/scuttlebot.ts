@@ -31,6 +31,7 @@ export function scuttlebot(): Scuttlebot {
     .use(require('ssb-private1'))
     .use(require('ssb-invite'))
     .use(require('ssb-ws'))
+    .use(require('ssb-blobs'))
     return secretStack(config)
 
 }

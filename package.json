@@ -41,6 +41,7 @@
     "ssb-backlinks": "^2.0.1",
     "ssb-feed": "^2.2.1",
     "ssb-private1": "^1.0.1",
+    "ssb-blobs": "^2.0.1",
     "supertest": "^6.3.3",
     "tap-spec": "^2.2.2",
     "tape": "^5.3.1",
