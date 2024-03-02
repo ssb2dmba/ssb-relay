@@ -22,27 +22,14 @@ const manifest = {
     add: 'async',
     publish: 'async',
     createHistoryStream: 'source',
-    get: 'async',
-    //getVectorClock: 'async',
-    //add: 'async',
-    //createFeedStream: 'source',
-    //createLogStream: 'source',
-    //createRawLogStream: 'source',
-    //createSequenceStream: 'source',
-    //createUserStream: 'source',
-    //createWriteStream: 'sink',
-    //del: 'async',
-    //messagesByType: 'source',
-    //getLatest: 'async',
-    //status: 'sync',
-    //version: 'sync',
+    get: 'async'
 };
 
 module.exports = {
     manifest: manifest,
     permissions: {
-        master: {allow: ['publish', 'invite,create','invite,use'], deny: null},
-        anonymous: {allow: ['publish', 'invite,use', 'createHistoryStream']}
+                master: {allow: ['publish', 'invite,create','invite,use'], deny: null},
+                anonymous: {allow: ['publish', 'invite,use', 'createHistoryStream']}
     },
     init: function (server, opts) {
 

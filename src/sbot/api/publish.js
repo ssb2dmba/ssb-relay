@@ -1,3 +1,5 @@
+const { hash } = require("ssb-keys");
+
 module.exports = function implementation(db) {
 
 
@@ -26,10 +28,27 @@ module.exports = function implementation(db) {
                 setTimeout(() => { // setTimeout help test works ...
                     cb(null, data)
                 }, 50)
+                if (data.value.content.mentions) {
+                    for (let mention of data.value.content.mentions) {
+                        var hash = mention.link
+                        if (!hash.startsWith("&")) return
+                        db.sbot.blobs.has(hash, function (err, has) {
+                            if(err) rb(err, true)
+                            if (!has) {
+                            db.sbot.blobs.want(mention.link, (err, has) => {
+                                if (err) {
+                                    console.log("err:", err)
+                                    cb(err,true)
+                                }
+                                cb(null,true)
+                            })
+                        }
+                        })
+                    }
+                }
             }
         })
     }
-
     return db;
 
 }
