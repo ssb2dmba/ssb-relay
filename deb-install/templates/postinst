@@ -117,7 +117,7 @@ sed -i "s|@external@|$ONION|g" "/home/ssb/.ssb/config"
 chown -R ssb:ssb /home/ssb/.ssb
 
 # is grants the node binary cap_net_raw privileges, so it can start/stop BLE advertising.
-sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
+setcap cap_net_raw+eip $(eval readlink -f `which node`)
 
 # rebuild BLE driver on the target platform
 cd /usr/local/ssb-relay/node_modules/@abandonware/bluetooth-hci-socket
