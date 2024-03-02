@@ -6,6 +6,6 @@ Section: net
 Priority: optional
 Maintainer: {{ author }}.
 Package: {{ package_name }}
-Architecture: arm64
-Depends: postgresql, nginx, nodejs, libsodium23, coreutils, bash, tor, python3-cryptography, libsecp256k1-1, net-tools, bluetooth, bluez
+Architecture: all
+Depends: postgresql, nginx, nodejs, libsodium23, coreutils, bash, tor, python3-cryptography, libsecp256k1-0, net-tools, bluetooth, bluez
 Description: {{ package_description }} .
