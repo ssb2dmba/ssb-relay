@@ -60,9 +60,9 @@ su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
 
 
 # Postgres database setup
-su - postgres -c "psql template1 -c 'create database ssb'" || echo "WARN: Failed to create ssb database"
-su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\"" || echo "WARN: Failed to create ssb database user"
-su - postgres -c 'psql -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql' || echo "WARN: Failed init ssb database"
+su - postgres -c "psql template1 -c 'create database ssb'"
+su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\""
+su - postgres -c 'psql ssb -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql'
 
 
 # tor configuration
