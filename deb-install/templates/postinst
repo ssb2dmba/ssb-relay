@@ -137,7 +137,7 @@ cd /usr/local/ssb-relay/node_modules/@abandonware/bluetooth-hci-socket
 ../../.bin/node-pre-gyp clean
 ../../.bin/node-pre-gyp node-pre-gyp install --fallback-to-build --update-binary
 
-chown -R ssb:ssb /usr/local/ssb-relay/
+#chown -R ssb:ssb /usr/local/ssb-relay/
 
 # allow sudo script
 # relay startup script
