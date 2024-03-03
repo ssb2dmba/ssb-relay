@@ -79,6 +79,8 @@ fi
 
 systemctl restart tor
 
+sleep 30
+
 ONION=`cat /var/lib/tor/ssb/hostname`
 
 # relay startup script
