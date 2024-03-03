@@ -54,19 +54,19 @@ EOF
 fi
 ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.target.wants/electrum_nmc.service || echo "WARN: Failed to create Electrum startup sym link"
 
-su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb
-su -c "/usr/local/bin/run_electrum_nmc create" ssb || echo "WARN: Failed to create default electrum wallet"
+su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb > /dev/null
+su -c "/usr/local/bin/run_electrum_nmc create" ssb > /dev/null || echo "WARN: Failed to create default electrum wallet"
 su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
 
 
 # Postgres database setup
-su - postgres -c "psql template1 -c 'create database ssb'"
-su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\""
-su - postgres -c 'psql ssb -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql'
+su - postgres -c "psql template1 -c 'create database ssb'" || echo "WARN: Failed to create ssb database"
+su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\"" || echo "WARN: Failed to create ssb database user"
+su - postgres -c 'psql ssb -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql' || echo "WARN: Failed to init ssb database"
 
 
 # tor configuration
-if grep -xq  "^HiddenServicePort 80 127.0.0.1:8000" /etc/tor/torrc;
+if grep -xq  "HiddenServiceDir /var/lib/tor/ssb/" /etc/tor/torrc;
 then
   echo "[WARN] tor config exists skipping"
 else
@@ -131,6 +131,11 @@ if [ ! -f /etc/sudoers.d/ssb ]; then
 %ssb ALL = (root) NOPASSWD: /usr/bin/cat /etc/network/interfaces.d/wlan0
 EOF
 fi
+
+
+cd /usr/local/ssb-relay/
+su ssb -c "./node_modules/.bin/pm2 start"
+su ssb -c "./node_modules/.bin/pm2 save"
 
 
 systemctl daemon-reload
