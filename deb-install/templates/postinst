@@ -2,6 +2,17 @@
 set -e
 set -o pipefail
 
+
+wait_file() {
+  local file="$1"; shift
+  local wait_seconds="${1:-10}"; shift # 10 seconds as default timeout
+  test $wait_seconds -lt 1 && echo 'At least 1 second is required' && return 1
+
+  until test $((wait_seconds--)) -eq 0 -o -e "$file" ; do sleep 1; done
+
+  test $wait_seconds -ge 0 # equivalent: let ++wait_seconds
+}
+
 # User setup
 useradd --system  ssb || echo ""
 chown -R ssb:ssb /home/ssb
@@ -79,7 +90,7 @@ fi
 
 systemctl restart tor
 
-sleep 30
+wait_file "/var/lib/tor/ssb/hostname" 30
 
 ONION=`cat /var/lib/tor/ssb/hostname`
 
