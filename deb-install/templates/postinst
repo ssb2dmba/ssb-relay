@@ -54,9 +54,9 @@ EOF
 fi
 ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.target.wants/electrum_nmc.service || echo "WARN: Failed to create Electrum startup sym link"
 
-su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb > /dev/null
-su -c "/usr/local/bin/run_electrum_nmc create" ssb > /dev/null || echo "WARN: Failed to create default electrum wallet"
-su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
+su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb >> /dev/null 2>&1 
+su -c "/usr/local/bin/run_electrum_nmc create" ssb >> /dev/null 2>&1  || echo "WARN: Failed to create default electrum wallet"
+su -c  "/usr/local/bin/run_electrum_nmc stop" ssb >> /dev/null 2>&1 || echo "WARN: Failed to stop electrum wallet"
 
 
 # Postgres database setup
@@ -137,6 +137,8 @@ cd /usr/local/ssb-relay/
 su ssb -c "./node_modules/.bin/pm2 start"
 su ssb -c "./node_modules/.bin/pm2 save"
 
+# https://github.com/Unitech/pm2/issues/3924
+ps aux | grep pm2 | grep -v grep | awk '{print $2}' | xargs kill -9
 
 systemctl daemon-reload
 systemctl start electrum_nmc
