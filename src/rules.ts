@@ -24,7 +24,9 @@ export function createNetWorkRules(server: Scuttlebot): object {
         if (cbs) cbs.push(fn)
         else fn()
     }
-
+    server.on("add", function (fn: Function, args: any) {
+        console.log("add!!!")
+    })
     //opinion: servers allow to connect every people he is following
     server.auth.hook(function (fn: Function, args: any) {
         var guest = args[0], cb = args[1]

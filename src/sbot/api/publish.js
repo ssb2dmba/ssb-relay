@@ -33,16 +33,13 @@ module.exports = function implementation(db) {
                         var hash = mention.link
                         if (!hash.startsWith("&")) return
                         db.sbot.blobs.has(hash, function (err, has) {
-                            if(err) rb(err, true)
-                            if (!has) {
-                            db.sbot.blobs.want(mention.link, (err, has) => {
-                                if (err) {
-                                    console.log("err:", err)
-                                    cb(err,true)
-                                }
-                                cb(null,true)
-                            })
-                        }
+                            if(err) {
+                                console.log(err)
+                                return
+                            }
+                            if (!has) {                                
+                                db.sbot.blobs.want(mention.link, (err, has) => {})
+                            }
                         })
                     }
                 }
