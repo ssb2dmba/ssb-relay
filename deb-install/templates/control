@@ -7,5 +7,5 @@ Priority: optional
 Maintainer: {{ author }}.
 Package: {{ package_name }}
 Architecture: all
-Depends: postgresql, sudo, npm, nodejs, libsodium23, coreutils, bash, tor, python3-cryptography, libsecp256k1-1, net-tools, bluetooth, bluez
+Depends: postgresql, ssh, sudo, npm, nodejs, libsodium23, coreutils, bash, tor, python3-cryptography, libsecp256k1-1, net-tools, bluetooth, bluez
 Description: {{ package_description }} .
