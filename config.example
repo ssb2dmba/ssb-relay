@@ -3,6 +3,7 @@
     "incoming": {
       "net": [
         { "scope": "public", "external": ["@external@"], "transform": "shs", "port": 8008 },
+        
         { "host": "0.0.0.0", "port": 8008, "scope": "public", "transform": "shs" },
         { "scope": "private", "transform": "shs", "port": 8008, "host": "0.0.0.0" }
       ]
