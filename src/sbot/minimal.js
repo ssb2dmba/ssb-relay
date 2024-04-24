@@ -30,91 +30,60 @@ var V = require('ssb-validate')
 var timestamp = require('monotonic-timestamp')
 var Obv = require('obv')
 var u = require('./util')
-var {box, unbox: _unbox} = require('./autobox')
-const {Pool} = require("pg");
+var { box, unbox: _unbox } = require('./autobox')
+const { Pool } = require("pg");
 
 module.exports = function (keys, opts) {
     var caps = (opts && opts.caps) || {}
     var hmacKey = caps.sign
 
+    var ref = require('ssb-ref')
 
+    function fatal(err) {
+        err.fatal = true
+        return err
+      }
 
+    // opinion: sequence shall not be strictly observed but just be a sync index
     // lets monkey patch ssb-validate for our relay needs:
     // no sequence validation !
     // no previous check !
-    var ref = require('ssb-ref')
-
-    V.isInvalidShape  = function (msg) {
-        if (msg.length > 1048576)
-        return new Error('Message must not be larger than 1Mo. Current size is '+ msg.length)
-        function isString (s) {
-            return s && 'string' === typeof s
-          }
-          
-          function isInteger (n) {
-            return ~~n === n
-          }
-          
-          function isObject (o) {
-            return o && 'object' === typeof o
-          }
-          
-          function isEncrypted (str) {
-            //NOTE: does not match end of string,
-            //so future box version are accepted.
-            //XXX check that base64 is canonical!
-            return isString(str) && V.isEncryptedRx.test(str) ///^[0-9A-Za-z\/+]+={0,2}\.box/.test(str)
-          }
-
-
-          function isValidOrder (msg, signed) {
-            var keys = Object.keys(msg)
-            if(signed && keys.length !== 7) return false
-            if(
-              keys[0] !== 'previous' ||
-              keys[3] !== 'timestamp' ||
-              keys[4] !== 'hash' ||
-              keys[5] !== 'content' ||
-              (signed && keys[6] !== 'signature')
-            ) return false
-            //author and sequence may be swapped.
-            if(!(
-              (keys[1] === 'sequence' && keys[2] === 'author') ||
-              (keys[1] === 'author' && keys[2] === 'sequence')
-            ))
-              return false
-            return true
-          }
-
-
-        if( 
-             !isObject(msg) ||
-            !isInteger(msg.sequence) ||
-            !ref.isFeedId(msg.author) ||
-            !(isObject(msg.content) || isEncrypted(msg.content)) ||
-            !isValidOrder(msg, false) || //false, because message may not be signed yet.
-            !V.isSupportedHash(msg)
-          )
-            return new Error('message has invalid properties:'+JSON.stringify(msg, null, 2))
-
-
-
-        return V.isInvalidContent(msg.content)
-      }
-      
-    
-
-
     V.checkInvalidCheap = function (state, msg) {
         //the message is just invalid
         if (!ref.isFeedId(msg.author))
             return new Error('invalid message: must have author')
         if (!V.isSigMatchesCurve(msg))
             return new Error('invalid message: signature type must match author type')
+
+        //state is id, sequence, timestamp
+        if (state) {
+            //most likely, we just tried to append two messages twice
+            //or append another message after an error.
+            // if(msg.sequence != state.sequence + 1)
+            //   return new Error('invalid message: expected sequence ' + (state.sequence + 1) + ' but got:'+ msg.sequence + 'in state:'+JSON.stringify(state)+', on feed:'+msg.author)
+            // //if we have the correct sequence and wrong previous,
+            // //this must be a fork!
+            // if(msg.previous != state.id)
+            //   return fatal(new Error('invalid message: expected different previous message, on feed:'+msg.author))
+            // //and check type, and length, and some other stuff. finally check the signature.
+        }
+        else {
+            // if (msg.previous !== null)
+            //     return fatal(new Error('initial message must have previous: null, on feed:' + msg.author))
+            // if (msg.sequence !== 1)
+            //     return fatal(new Error('initial message must have sequence: 1, on feed:' + msg.author))
+            if ('number' !== typeof msg.timestamp)
+                return fatal(new Error('initial message must have timestamp, on feed:' + msg.author))
+        }
+        // if (!V.isValidOrder(msg, true))
+        //     return fatal(new Error('message must have keys in allowed order'))
+
         return V.isInvalidShape(msg)
     }
 
-    var state = V.initial()    
+
+
+    var state = V.initial()
 
     var flush = new u.AsyncJobQueue() // doesn't currenlty use async-done
 
@@ -177,7 +146,7 @@ module.exports = function (keys, opts) {
 
     var db = {}
 
-//  var append = db.rawAppend = db.append
+    //  var append = db.rawAppend = db.append
 
     db.post = Obv()
 
@@ -249,7 +218,7 @@ module.exports = function (keys, opts) {
 
     const getFeedState = (feedId) => {
         const feedState = state.feeds[feedId]
-        if (!feedState) return {id: null, sequence: 0}
+        if (!feedState) return { id: null, sequence: 0 }
         // NOTE this covers the case where you have a brand new feed (or new createFeed)
 
         // Remove vestigial properties like 'timestamp'
@@ -293,7 +262,7 @@ module.exports = function (keys, opts) {
     }
 
     db.addBoxer = function addBoxer(boxer) {
-        if (typeof boxer === 'function') return db.addBoxer({value: boxer})
+        if (typeof boxer === 'function') return db.addBoxer({ value: boxer })
         if (typeof boxer.value !== 'function') throw new Error('invalid boxer')
 
         if (boxer.init) {
