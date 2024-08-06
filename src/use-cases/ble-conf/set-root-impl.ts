@@ -1,18 +1,16 @@
-import { RootUser } from "../../entities/root-user"
-import { RootUserRepository } from "../../repository/root-user-repository"
+import { RootUser } from "../../entities/root-user";
+import type { RootUserRepository } from "../../repository/root-user-repository";
 
+export class SetRootUserImpl {
+  rootUserRepository: RootUserRepository;
 
-export class SetRootUserImpl   {
-    
-    rootUserRepository: RootUserRepository
+  constructor(rootUserRepository: RootUserRepository) {
+    this.rootUserRepository = rootUserRepository;
+  }
 
-    constructor(rootUserRepository: RootUserRepository) {
-        this.rootUserRepository = rootUserRepository
-    }
-
-    execute(key: string): void {
-        const rootUser: RootUser =  new RootUser(key);
-        this.rootUserRepository.clearRootUser()
-        this.rootUserRepository.setRootUser(rootUser)
-    }
+  execute(key: string): void {
+    const rootUser: RootUser = new RootUser(key);
+    this.rootUserRepository.clearRootUser();
+    this.rootUserRepository.setRootUser(rootUser);
+  }
 }

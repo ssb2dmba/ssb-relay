@@ -1,10 +1,10 @@
-import type {Config} from '@jest/types';
+import type { Config } from "@jest/types";
 // Sync object
 const config: Config.InitialOptions = {
-  globalSetup: "./jestGlobalSetup.js",
+  globalSetup: "./jestGlobalSetup.cjs",
   verbose: true,
   transform: {
-  "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": "ts-jest",
   },
 };
 export default config;

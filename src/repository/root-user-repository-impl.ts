@@ -1,29 +1,21 @@
-import { RootUser } from "../entities/root-user";
-import { RootUserRepository } from "./root-user-repository";
-import {Pool} from 'pg';
+import type { RootUser } from "../entities/root-user";
+import pool from "../repository/pool";
+import type { RootUserRepository } from "./root-user-repository";
 
-export class RootUserRepositoryImpl  implements RootUserRepository  {
-    
-    pool: Pool
+export class RootUserRepositoryImpl implements RootUserRepository {
+  async setRootUser(rootUser: RootUser): Promise<void> {
+    await pool.query("insert into root (key) values ($1)", [rootUser.key]);
+  }
 
-    constructor(pool: Pool) {
-        this.pool = pool
-    }
+  async clearRootUser(): Promise<void> {
+    await pool.query("delete from root");
+  }
 
-
-    async setRootUser(rootUser: RootUser): Promise<void>  {
-        await this.pool.query('insert into root (key) values ($1)', [rootUser.key]);
-    }
-
-    async clearRootUser(): Promise<void> {
-        await this.pool.query('delete from root');
-    }
-
-    async getRootUser(): Promise<RootUser> {
-        const dbResponse = await this.pool.query('SELECT * FROM root');
-        const result = dbResponse.rows.map(item => ({
-            key: item.key
-        }));
-        return result[0];
-    }
+  async getRootUser(): Promise<RootUser> {
+    const dbResponse = await pool.query("SELECT * FROM root");
+    const result = dbResponse.rows.map((item) => ({
+      key: item.key,
+    }));
+    return result[0];
+  }
 }
