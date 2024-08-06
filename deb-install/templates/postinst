@@ -2,6 +2,17 @@
 set -e
 set -o pipefail
 
+
+wait_file() {
+  local file="$1"; shift
+  local wait_seconds="${1:-10}"; shift # 10 seconds as default timeout
+  test $wait_seconds -lt 1 && echo 'At least 1 second is required' && return 1
+
+  until test $((wait_seconds--)) -eq 0 -o -e "$file" ; do sleep 1; done
+
+  test $wait_seconds -ge 0 # equivalent: let ++wait_seconds
+}
+
 # User setup
 useradd --system  ssb || echo ""
 chown -R ssb:ssb /home/ssb
@@ -29,7 +40,7 @@ chown -R ssb:ssb /home/ssb/.electrum-nmc
 
 ln -s  /usr/local/Electrum-NMC/run_electrum_nmc /usr/local/bin/run_electrum_nmc  || echo "WARN: Failed to create Electrum sym link"
 
-cp /usr/lib/aarch64-linux-gnu/libsecp256k1.so.1 /usr/local/Electrum-NMC/electrum_nmc/electrum/libsecp256k1.so.0
+cp /usr/lib/*/libsecp256k1.so.1 /usr/local/Electrum-NMC/electrum_nmc/electrum/libsecp256k1.so.0
 
 
 if [ ! -f /etc/systemd/system/electrum_nmc.service ]; then
@@ -54,19 +65,25 @@ EOF
 fi
 ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.target.wants/electrum_nmc.service || echo "WARN: Failed to create Electrum startup sym link"
 
+<<<<<<< HEAD
+su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb >> /dev/null 2>&1 
+su -c "/usr/local/bin/run_electrum_nmc create" ssb >> /dev/null 2>&1  || echo "WARN: Failed to create default electrum wallet"
+su -c  "/usr/local/bin/run_electrum_nmc stop" ssb >> /dev/null 2>&1 || echo "WARN: Failed to stop electrum wallet"
+=======
 su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb
 su -c "/usr/local/bin/run_electrum_nmc create" ssb || echo "WARN: Failed to create default electrum wallet"
 su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
+>>>>>>> main
 
 
 # Postgres database setup
 su - postgres -c "psql template1 -c 'create database ssb'" || echo "WARN: Failed to create ssb database"
 su - postgres -c "psql template1 -c \"create user ssb with password 'ssb'\"" || echo "WARN: Failed to create ssb database user"
-su - postgres -c 'psql -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql' || echo "WARN: Failed init ssb database"
+su - postgres -c 'psql ssb -v ON_ERROR_STOP= -qf /usr/local/ssb-relay/init.sql' || echo "WARN: Failed to init ssb database"
 
 
 # tor configuration
-if grep -xq  "^HiddenServicePort 80 127.0.0.1:8000" /etc/tor/torrc;
+if grep -xq  "HiddenServiceDir /var/lib/tor/ssb/" /etc/tor/torrc;
 then
   echo "[WARN] tor config exists skipping"
 else
@@ -77,6 +94,12 @@ HiddenServicePort 8008 127.0.0.1:8008
 EOF
 fi
 
+<<<<<<< HEAD
+systemctl restart tor
+=======
+>>>>>>> main
+
+wait_file "/var/lib/tor/ssb/hostname" 30
 
 ONION=`cat /var/lib/tor/ssb/hostname`
 
@@ -108,9 +131,7 @@ WantedBy=multi-user.target
 EOF
 fi
 
-if [ ! -f /etc/systemd/system/multi-user.target.wants/pm2-ssb.service ]; then
-  ln -s /etc/systemd/system/pm2-ssb.service /etc/systemd/system/multi-user.target.wants/pm2-ssb.service
-fi 
+env PATH=$PATH:/usr/bin /usr/local/ssb-relay/node_modules/pm2/bin/pm2 startup systemd -u ssb --hp /home/ssb
 
 mkdir -p /home/ssb/.ssb
 cp /usr/local/ssb-relay/config.example /home/ssb/.ssb/config
@@ -126,14 +147,21 @@ npm run install
 
 # allow sudo script
 # relay startup script
-if [ ! -f /etc/sudoers.d/iw ]; then
-  cat << EOF >> /etc/sudoers.d/iw
-%ssb ALL = (root) NOPASSWD: scanWIFI.sh
-%ssb ALL = (root) NOPASSWD: setWIFI.sh
-%ssb ALL = (root) NOPASSWD: cat /etc/network/interfaces.d/wlan0
+if [ ! -f /etc/sudoers.d/ssb ]; then
+  cat << EOF >> /etc/sudoers.d/ssb
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/scanWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/local/ssb-relay/setWIFI.sh
+%ssb ALL = (root) NOPASSWD: /usr/bin/cat /etc/network/interfaces.d/wlan0
 EOF
 fi
 
+
+cd /usr/local/ssb-relay/
+su ssb -c "./node_modules/.bin/pm2 start"
+su ssb -c "./node_modules/.bin/pm2 save"
+
+# https://github.com/Unitech/pm2/issues/3924
+ps aux | grep pm2 | grep -v grep | awk '{print $2}' | xargs kill -9
 
 systemctl daemon-reload
 systemctl start electrum_nmc

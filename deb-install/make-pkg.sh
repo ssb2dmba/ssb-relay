@@ -109,7 +109,7 @@ install_electrum_nmc
 build_md5
 fix_control_perms
 
-archive="${package_name}_${app_version}_arm64.deb"
+archive="${package_name}_${app_version}_all.deb"
 fakeroot dpkg-deb -Zxz --build "$node_deb_dir/sysroot" "$node_deb_dir/$archive"
 
 # cleanup

@@ -24,7 +24,6 @@ export function createNetWorkRules(server: Scuttlebot): object {
         if (cbs) cbs.push(fn)
         else fn()
     }
-
     //opinion: servers allow to connect every people he is following
     server.auth.hook(function (fn: Function, args: any) {
         var guest = args[0], cb = args[1]
@@ -65,30 +64,30 @@ export function createNetWorkRules(server: Scuttlebot): object {
     }
 
     // opinion when client terminate receiving his own messages relay query them also
-    server.on('db:createHistoryStream', function (id: any, isConnected: any) {
-        if (isConnected[0]!=null) {
-            var rpc = isConnected[0]
-            try {
-                server.last.get(rpc.id, function (err: any, message: any) {
-                    var sequence = 0
-                    if (err || Object.keys(message).length === 0) {
-                        sequence = 0
-                    } else {
-                        sequence = message.sequence
-                    }
-                    pull(
-                        rpc.createHistoryStream({
-                            id: rpc.id,
-                            seq: sequence,
-                            live: true
-                        }),
-                        createHistoryStreamSink(rpc)
-                    )
-                })
-            } catch (e) {
-                console.log('on db:createHistoryStream',e)
-            }
-        }
-    })
+    // opinion: on connect server call for client new message
+    server.on('rpc:connect', function (rpc: any, isClient: any) {
+        if (rpc.stream === undefined) return;
+         try {
+             server.last.get(rpc.id, function (err: any, message: any) {
+                 var sequence = 0
+                 if (err || Object.keys(message).length === 0) {
+                     sequence = 0
+                 } else {
+                     sequence = message.sequence
+                 }
+                 pull(
+                     rpc.createHistoryStream({
+                         id: rpc.id,
+                         seq: sequence,
+                         live: true
+                     }),
+                     createHistoryStreamSink(rpc)
+                 )
+             })
+         } catch (e) {
+             console.log('rpc:connect',e)
+         }
+ 
+     })
     return server
 }
