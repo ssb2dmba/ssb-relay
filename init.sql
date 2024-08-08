@@ -4,6 +4,8 @@
 
 -- Dumped from database version 13.9 (Debian 13.9-0+deb11u1)
 -- Dumped by pg_dump version 13.9 (Debian 13.9-0+deb11u1)
+grant usage on schema public to public;
+grant create on schema public to public;
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
