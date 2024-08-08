@@ -6,7 +6,6 @@ import { GetRootUserImpl } from "../../use-cases/ble-conf/get-root-impl";
 import { SetRootUserImpl } from "../../use-cases/ble-conf/set-root-impl";
 
 import { RootUserRepositoryImpl } from "../../repository/root-user-repository-impl";
-import type { Scuttlebot } from "../../ssb/types/scuttlebot-type";
 import { SsbBleService } from "./ssb-ble-service";
 import { SsidCharacteristic } from "./ssid-characteristic";
 
@@ -19,22 +18,17 @@ describe("SsidCharacteristic", () => {
   let ssidCharacteristic: SsidCharacteristic;
 
   beforeEach(() => {
-    const stack = {} as any;
-    stack.getDbConnectionPool = () => ({
-      query: jest.fn().mockResolvedValue({
-        rows: [{ key: "testKey" }],
-      }),
-    });
+
 
     const ssbBleService: SsbBleService = new SsbBleService(
       new GetRootUserImpl(
-        new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()),
+        new RootUserRepositoryImpl(),
       ),
       new SetRootUserImpl(
-        new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()),
+        new RootUserRepositoryImpl(),
       ),
       new ClearRootUserImpl(
-        new RootUserRepositoryImpl((stack as Scuttlebot).getDbConnectionPool()),
+        new RootUserRepositoryImpl(),
       ),
       new GetIpAdressImpl(),
       new GetOnionAdressImpl(),
