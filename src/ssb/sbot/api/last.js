@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 module.exports = function implementation(sbot) {
-  async function selectLast(pool, author) {
+  async function selectLast(author) {
     const text =
       "select * from message where message->'value'->>'author' = ($1) order by message->'value'->'sequence' desc limit 1";
-    return await pool.query(text, [author]);
+    return await getPool().query(text, [author]);
   }
 
   sbot.last = {};
@@ -30,7 +30,7 @@ module.exports = function implementation(sbot) {
       key = k.id;
     }
     try {
-      const data = await selectLast(pool, key);
+      const data = await selectLast(key);
       if (data.rowCount > 0) {
         cb(null, data.rows[0].message.value);
       } else {

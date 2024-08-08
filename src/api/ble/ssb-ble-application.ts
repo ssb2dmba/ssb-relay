@@ -54,13 +54,13 @@ export class SsbBleApplication {
     const ssbBleController = new SsbBleController(
       new SsbBleService(
         new GetRootUserImpl(
-          new RootUserRepositoryImpl(sbot.getDbConnectionPool()),
+          new RootUserRepositoryImpl(),
         ),
         new SetRootUserImpl(
-          new RootUserRepositoryImpl(sbot.getDbConnectionPool()),
+          new RootUserRepositoryImpl(),
         ),
         new ClearRootUserImpl(
-          new RootUserRepositoryImpl(sbot.getDbConnectionPool()),
+          new RootUserRepositoryImpl(),
         ),
         new GetIpAdressImpl(),
         new GetOnionAdressImpl(),

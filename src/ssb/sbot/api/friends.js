@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 module.exports = function implementation(sbot) {
   sbot.isFollowing = async (params, cb) => {
@@ -33,16 +33,13 @@ module.exports = function implementation(sbot) {
                 ORDER by message->'sequence' desc 
                 LIMIT 1
             `;
-      console.log(query, queryParams);
-      return await pool.query(query, queryParams);
+      return await getPool().query(query, queryParams);
     };
 
     let result;
     let error = null;
     try {
-      // todo await ?
       result = await suspendable(params);
-      console.log(result.rowCount);
       if (result.rowCount > 0) {
         if (result.rows[0].message.value.content.following === true) {
           return cb(null, true);

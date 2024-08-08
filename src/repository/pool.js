@@ -15,7 +15,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Pool } from "pg"; // Client import is req.
+
+import pg from 'pg'
+const { Pool } = pg
+
+let mainPool = null;
 
 const lockable = async (pool) => {
   const client = await pool.connect();
@@ -25,17 +29,28 @@ const lockable = async (pool) => {
   client.release();
 };
 
-const pool = new Pool({
-  user: "ssb",
-  host: "localhost",
-  database: "ssb",
-  password: "ssb",
-  port: 5432, // Default PostgreSQL port
-});
+function createPool() {
+  const pool = new Pool({
+    user: "ssb",
+    host: "localhost",
+    database: "ssb",
+    password: "ssb",
+    port: 5432, // Default PostgreSQL port
+  });
+  
+  // await for the pool to be up
+  lockable(pool).then(() => {
+    // pass
+  });
+  return pool;
+}
 
-// await for the pool to be up
-lockable(pool).then(() => {
-  // do nothing
-});
+function getPool(){
+  if(!mainPool){
+    mainPool = createPool();
+  }
+  return mainPool;
+}
 
-export default pool;
+
+export default getPool;

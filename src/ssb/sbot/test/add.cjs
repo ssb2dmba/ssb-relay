@@ -1,6 +1,6 @@
 var tape = require("tape");
 var util = require("util");
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 var createSSB = require("./util/create-ssb.cjs");
 
@@ -8,7 +8,6 @@ function run(opts) {
   var ssb = createSSB("test-ssb-add", {});
 
   async function cleanup(pool) {
-    //var client = await pool.connect()
     const text = "delete from message";
     return await pool.query(text, []);
   }

@@ -47,6 +47,12 @@ CREATE TABLE public.root (
     updated_on timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE ap_keypair (
+    handle VARCHAR(255) PRIMARY KEY,
+    public_key TEXT NOT NULL,
+    private_key TEXT NOT NULL
+);
+
 
 ALTER TABLE public.root OWNER TO ssb;
 

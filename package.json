@@ -1,6 +1,6 @@
 {
   "name": "ssb-relay",
-  "version": "0.0.2-development",
+  "version": "0.0.3-development",
   "description": "a SecureScuttlebut relay server",
   "private": true,
   "homepage": "https://github.com/ssb2dmba/ssb-relay",
