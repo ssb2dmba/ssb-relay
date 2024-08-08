@@ -57,7 +57,7 @@
     "dev": "node  --import tsx ./src/index.ts",
     "jest": "node --import tsx --test ./src/**/*test*.ts",
     "tape": "node --import tsx --test ./src/**/*test*.js",
-    "test": "npm run tape" // not able to mock BLE ... npm run jest && 
+    "test": "npm run tape" 
   },
   "repository": {
     "type": "git",
