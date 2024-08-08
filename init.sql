@@ -51,14 +51,18 @@ CREATE TABLE public.root (
     updated_on timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ap_keypair (
+ALTER TABLE public.root OWNER TO ssb;
+
+
+CREATE TABLE public.ap_keypair (
     handle VARCHAR(255) PRIMARY KEY,
     public_key TEXT NOT NULL,
     private_key TEXT NOT NULL
 );
 
+ALTER TABLE public.ap_keypair OWNER TO ssb;
 
-ALTER TABLE public.root OWNER TO ssb;
+
 
 --
 -- PostgreSQL database dump complete
