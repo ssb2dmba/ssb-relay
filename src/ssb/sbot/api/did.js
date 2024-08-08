@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 module.exports = function implementation(sbot) {
-  async function selectDid(pool, name) {
+  async function selectDid(name) {
     const sql = `
         select 
             m1.*
@@ -32,13 +32,13 @@ module.exports = function implementation(sbot) {
                 order by message->'value'->>'sequence' desc limit 1  
                 );
             `;
-    return await pool.query(sql, [name]);
+    return await getPool().query(sql, [name]);
   }
 
   sbot.did = {};
   sbot.did.get = async (name, cb) => {
     try {
-      const data = await selectDid(pool, name);
+      const data = await selectDid(name);
       if (data.rowCount > 0) {
         cb(null, data.rows[0].message.value);
       } else {

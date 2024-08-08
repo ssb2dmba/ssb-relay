@@ -18,7 +18,7 @@
 import QueryStream from "pg-query-stream";
 import PCont from "pull-cont";
 import pull from "pull-stream";
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 import u from "../util";
 
 module.exports = function implementation(sbot) {
@@ -122,7 +122,7 @@ module.exports = function implementation(sbot) {
 
     return pull(
       PCont((cb) => {
-        pool.connect().then((c) => {
+        getPool().connect().then((c) => {
           client = c;
           cb(null, createSource);
         });

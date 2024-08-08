@@ -1,16 +1,18 @@
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 module.exports = function implementation(db) {
-  async function insertMessage(pool, message) {
+  async function insertMessage(message) {
     const text = `
       INSERT INTO message (message)
       VALUES ($1) ON CONFLICT DO NOTHING
     `;
 
     let result;
-    const client = await pool.connect();
+    const client = await getPool().connect();
     try {
       result = await client.query(text, [message]);
+    } catch (e) {
+      console.log(e)
     } finally {
       client.release();
     }
@@ -20,9 +22,10 @@ module.exports = function implementation(db) {
   db.add = (msg, cb) => {
     db.queue(msg, async (err, data) => {
       if (err) {
+        console.log(err)
         cb(err);
       } else {
-        insertMessage(pool, data);
+        insertMessage(data);
         setTimeout(() => {
           // setTimeout help test works ...
           cb(null, data);

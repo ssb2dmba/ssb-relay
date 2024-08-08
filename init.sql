@@ -4,13 +4,17 @@
 
 -- Dumped from database version 13.9 (Debian 13.9-0+deb11u1)
 -- Dumped by pg_dump version 13.9 (Debian 13.9-0+deb11u1)
+grant usage on schema public to ssb;
+grant create on schema public to ssb;
+
+
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+SELECT pg_catalog.set_config('search_path', 'public', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -47,8 +51,18 @@ CREATE TABLE public.root (
     updated_on timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
-
 ALTER TABLE public.root OWNER TO ssb;
+
+
+CREATE TABLE public.ap_keypair (
+    handle VARCHAR(255) PRIMARY KEY,
+    public_key TEXT NOT NULL,
+    private_key TEXT NOT NULL
+);
+
+ALTER TABLE public.ap_keypair OWNER TO ssb;
+
+
 
 --
 -- PostgreSQL database dump complete

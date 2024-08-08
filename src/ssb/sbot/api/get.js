@@ -14,22 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 module.exports = function implementation(sbot) {
-  async function selectMessage(pool, key) {
+  
+  async function selectMessage(key) {
     const text = "select * from message where message->>'key' = ($1)";
-    return await pool.query(text, [key]);
+    return await getPool().query(text, [key]);
   }
 
-  sbot.get = async (k, cb) => {
+  sbot.get = async (key, cb) => {
     if (typeof key === "object") {
-      meta = k.meta;
-      key = k.id;
+      meta = key.meta;
+      key = key.id;
     }
+    console.log(key)
 
     try {
-      const data = await selectMessage(pool, key);
+      const data = await selectMessage(key);
       if (data.rowCount === 1) {
         cb(null, data.rows[0].message.value);
       } else {

@@ -2,7 +2,7 @@ import { federation } from "@fedify/fedify/x/hono";
 import { Hono } from "hono";
 import { SsbBleApplication } from "./api/ble/ssb-ble-application";
 import inviteApiHttp from "./api/http/invite";
-import MyFederation from "./federation";
+import MyFederation from "./activitypub/federation";
 import { scuttlebot } from "./scuttlebot";
 import { createNetWorkRules } from "./ssb/rules";
 

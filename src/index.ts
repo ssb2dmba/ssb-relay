@@ -1,10 +1,13 @@
 import { serve } from "@hono/node-server";
 import { configure, getConsoleSink } from "@logtape/logtape";
 import app from "./app";
-await configure({
+configure({
   sinks: { console: getConsoleSink() },
   filters: {},
-  loggers: [{ category: "fedify", sinks: ["console"], level: "info" }],
+  loggers: [
+    { category: "fedify", sinks: ["console"], level: "info" },
+    { category: [ 'logtape', 'meta'], sinks: ["console"], level: "warning" },
+  ],
 });
 serve(
   {
