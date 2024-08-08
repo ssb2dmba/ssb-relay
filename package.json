@@ -52,15 +52,16 @@
     "@types/pg": "^8.11.6",
     "@types/supertest": "6.0.2",
     "@types/tape": "^5.6.4",
+    "chai": "^5.1.1",
     "jest": "^29.7.0",
     "tape": "5.3.1",
     "ts-jest": "29.1.1"
   },
   "scripts": {
     "dev": "node  --import tsx ./src/index.ts",
-    "jest": "./node_modules/.bin/jest",
-    "tape": "./node_modules/.bin/tape src/ssb/sbot/test/add.cjs",
-    "test": "npm run jest"
+    "jest": "node --import tsx --test ./src/**/*test*.ts",
+    "tape": "node --import tsx --test ./src/**/*test*.js",
+    "test": "npm run jest && npm run tape"
   },
   "repository": {
     "type": "git",

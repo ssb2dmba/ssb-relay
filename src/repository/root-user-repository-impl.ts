@@ -3,6 +3,7 @@ import getPool from "../repository/pool";
 import type { RootUserRepository } from "./root-user-repository";
 
 export class RootUserRepositoryImpl implements RootUserRepository {
+  
   async setRootUser(rootUser: RootUser): Promise<void> {
     await getPool().query("insert into root (key) values ($1)", [rootUser.key]);
   }

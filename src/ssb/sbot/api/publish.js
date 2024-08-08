@@ -1,4 +1,4 @@
-import pool from "../../../repository/pool.js";
+import getPool from "../../../repository/pool.js";
 
 module.exports = function implementation(db) {
   async function insertMessage(message) {
@@ -11,6 +11,8 @@ module.exports = function implementation(db) {
     const client = await getPool().connect();
     try {
       result = await client.query(text, [message]);
+    } catch (e) {
+      console.log(e)
     } finally {
       client.release();
     }
@@ -20,6 +22,7 @@ module.exports = function implementation(db) {
   db.add = (msg, cb) => {
     db.queue(msg, async (err, data) => {
       if (err) {
+        console.log(err)
         cb(err);
       } else {
         insertMessage(data);

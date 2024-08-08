@@ -25,7 +25,7 @@
 
  */
 
-import pool from "../../repository/pool";
+import getPool from "../../repository/pool";
 
 ("use strict");
 var V = require("ssb-validate");
@@ -164,7 +164,7 @@ module.exports = (keys, opts) => {
 
     let result;
 
-    var client = await pool.connect();
+    var client = await getPool().connect();
     try {
       result = await client.query(text, [message]);
     } finally {
@@ -198,7 +198,7 @@ module.exports = (keys, opts) => {
 
     // Update the observable
     batch.forEach(async (data) => {
-      insertMessage(pool, data);
+      insertMessage(getPool(), data);
       db.post.set(u.originalData(data));
     });
     //})

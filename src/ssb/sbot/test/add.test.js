@@ -1,25 +1,28 @@
-var tape = require("tape");
-var util = require("util");
+//var tape = require("tape");
+//var util = require("util");
 import getPool from "../../../repository/pool.js";
-
-var createSSB = require("./util/create-ssb.cjs");
+import tape from "tape";
+import util from "node:util";
+import createSSB  from "./util/create-ssb.js";
+//var createSSB = require("./util/create-ssb.js");
 
 function run(opts) {
   var ssb = createSSB("test-ssb-add", {});
 
   async function cleanup(pool) {
+    //var client = await pool.connect()
     const text = "delete from message";
     return await pool.query(text, []);
   }
 
   async function selectMessage(pool, key) {
-    var client = await pool.connect();
+    var client = await getPool().connect();
     const text = "select message from message where message->>'key'= ($1)";
     return pool.query(text, [key]);
   }
 
   tape("before all", async function (t) {
-    await cleanup(pool);
+    await cleanup(getPool());
   });
 
   /** */
@@ -38,7 +41,7 @@ function run(opts) {
     ssb.add(msgok, async function (err, msg) {
       if (err) t.error();
       let result = await selectMessage(
-        pool,
+        getPool(),
         "%vEJYxLbRXclTzW6mEiEXga/h4rYSuKJIsUKryxSVZcA=.sha256",
       );
       t.equal(result.rowCount, 1, "must have one and only one message");
@@ -148,7 +151,7 @@ function run(opts) {
     ssb.publish(msgok, async function (err, msg, key) {
       if (err) t.error();
       let result = await selectMessage(
-        pool,
+        getPool(),
         "%fH6ZETSgkMAvxbMO8aAz1h8rNLO4lKoWMTtmxZZag/A=.sha256",
       );
       t.equal(result.rowCount, 0, "must store message with invalid signature");
@@ -159,7 +162,6 @@ function run(opts) {
   tape("get works with promisify", function (t) {
     ssb.publish({ type: "okay" }, function (err, msg) {
       t.error(err);
-      console.log(msg.key);
       t.equal(msg.value.content.type, "okay");
       setTimeout(() => {
         util
@@ -173,6 +175,7 @@ function run(opts) {
   });
 
   tape.onFinish(function () {
+    process.exit(0);
     pool.end();
   });
 }

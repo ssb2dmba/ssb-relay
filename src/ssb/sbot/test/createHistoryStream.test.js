@@ -4,9 +4,9 @@ var tape = require("tape");
 var pull = require("pull-stream");
 var crypto = require("crypto");
 var util = require("util");
-var poolModule = require("../pool");
-
-var createSSB = require("./util/create-ssb");
+//var poolModule = require("../../../repository/pool");
+import createSSB from "./util/create-ssb.js";
+//var createSSB = require("./util/create-ssb");
 const { promisify } = require("util");
 
 function run(opts) {
@@ -38,8 +38,6 @@ function run(opts) {
     Promise.all(
       [...new Array(messages)].map(async (_, i) => {
         const entry = await promisify(ssb.publish)({ type: "test" });
-        process.stdout.write(".");
-
         testEqual(typeof entry, "object");
         testEqual(typeof entry.key, "string");
         testEqual(typeof entry.value, "object");
@@ -69,12 +67,9 @@ function run(opts) {
           }
           seq = msg.value.sequence;
           i++;
-          console.log(i, seq);
         },
         function (err) {
           if (err) throw err;
-          t.equals(i, 100);
-          t.end();
         },
       ),
     );

@@ -23,11 +23,12 @@ module.exports = function implementation(sbot) {
     return await getPool().query(text, [key]);
   }
 
-  sbot.get = async (k, cb) => {
+  sbot.get = async (key, cb) => {
     if (typeof key === "object") {
-      meta = k.meta;
-      key = k.id;
+      meta = key.meta;
+      key = key.id;
     }
+    console.log(key)
 
     try {
       const data = await selectMessage(key);
