@@ -8,7 +8,7 @@ import setCreateListener from "./listeners/create-listener";
 import setErrorListener from "./listeners/errors-listener";
 import setFollowingDispatcher from "./dispatchers/following-dispatcher";
 import setFollowersDispatcher from "./dispatchers/followers-dispatcher";
-import setOutBoxDispatcher from "./dispatchers/outbox-dispatcher";
+import  { setOutBoxDispatcher } from "./dispatchers/outbox-dispatcher";
 import setNodeInfoDispatcher from "./dispatchers/node-info-dispatcher";
 import setUndoListener from "./listeners/undo-listener";
 
@@ -30,11 +30,12 @@ class MyFederation {
         console.error("Failed to deliver an activity:", error);
         console.error("Activity:", activity);
       },
+      skipSignatureVerification: true
     });
     // add listeners
     const inboxListener = setInboxListener(this.federation);
     setCreateListener(inboxListener);
-    setFollowListener(inboxListener);
+    setFollowListener(inboxListener, this.sbot);
     setUndoListener(inboxListener);
     setErrorListener(inboxListener);
     // add dispatchers

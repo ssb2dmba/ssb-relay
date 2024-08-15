@@ -24,10 +24,10 @@ module.exports = function implementation(sbot) {
   }
 
   sbot.last = {};
-  sbot.last.get = async (k, cb) => {
+  sbot.last.get = async (key, cb) => {
     if (typeof key === "object") {
-      meta = k.meta;
-      key = k.id;
+      meta = key.meta;
+      key = key.id;
     }
     try {
       const data = await selectLast(key);
@@ -40,6 +40,5 @@ module.exports = function implementation(sbot) {
       cb(e, null);
     }
   };
-
   return sbot;
 };

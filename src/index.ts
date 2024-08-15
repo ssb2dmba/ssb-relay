@@ -5,7 +5,9 @@ configure({
   sinks: { console: getConsoleSink() },
   filters: {},
   loggers: [
-    { category: "fedify", sinks: ["console"], level: "info" },
+    { category: "fedify", sinks: ["console"], level: "debug" },
+    { category: ["fedify","*","*"], sinks: ["console"], level: "debug" },
+    { category: "ssbrelay", sinks: ["console"], level: "debug" },
     { category: [ 'logtape', 'meta'], sinks: ["console"], level: "warning" },
   ],
 });

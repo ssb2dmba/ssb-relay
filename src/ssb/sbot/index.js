@@ -61,6 +61,7 @@ module.exports = {
       last: {
         get: ssb.last.get,
       },
+      getLatest: ssb.last.get,
       did: {
         get: ssb.did.get,
       },

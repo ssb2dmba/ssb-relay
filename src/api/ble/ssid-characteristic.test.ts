@@ -9,6 +9,7 @@ import { RootUserRepositoryImpl } from "../../repository/root-user-repository-im
 import { SsbBleService } from "./ssb-ble-service";
 import { SsidCharacteristic } from "./ssid-characteristic";
 
+
 jest.mock("@abandonware/bleno", () => ({
   Characteristic: jest.fn(),
   Descriptor: jest.fn(),

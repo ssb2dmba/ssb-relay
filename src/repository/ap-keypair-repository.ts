@@ -1,6 +1,6 @@
-import { ActivityPubKeypair } from "../entities/ap-keypair";
+import { AppKeypair } from "../entities/ap-keypair";
 
 export interface ActivityPubKeyPairRepository {
-  getActivityPubKeyPair(handle: string): Promise<ActivityPubKeypair>;
-  setActivityPubKeyPair (activityPubKeyPair: ActivityPubKeypair): void;
+  getActivityPubKeyPair(handle: string): Promise<AppKeypair>;
+  setActivityPubKeyPair (activityPubKeyPair: AppKeypair): void;
 }
