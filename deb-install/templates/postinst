@@ -65,15 +65,9 @@ EOF
 fi
 ln -s /etc/systemd/system/electrum_nmc.service /etc/systemd/system/multi-user.target.wants/electrum_nmc.service || echo "WARN: Failed to create Electrum startup sym link"
 
-<<<<<<< HEAD
 su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb >> /dev/null 2>&1 
 su -c "/usr/local/bin/run_electrum_nmc create" ssb >> /dev/null 2>&1  || echo "WARN: Failed to create default electrum wallet"
 su -c  "/usr/local/bin/run_electrum_nmc stop" ssb >> /dev/null 2>&1 || echo "WARN: Failed to stop electrum wallet"
-=======
-su -c  "/usr/local/bin/run_electrum_nmc daemon & sleep 30" ssb
-su -c "/usr/local/bin/run_electrum_nmc create" ssb || echo "WARN: Failed to create default electrum wallet"
-su -c  "/usr/local/bin/run_electrum_nmc stop" ssb
->>>>>>> main
 
 
 # Postgres database setup
@@ -94,10 +88,7 @@ HiddenServicePort 8008 127.0.0.1:8008
 EOF
 fi
 
-<<<<<<< HEAD
 systemctl restart tor
-=======
->>>>>>> main
 
 wait_file "/var/lib/tor/ssb/hostname" 30
 
