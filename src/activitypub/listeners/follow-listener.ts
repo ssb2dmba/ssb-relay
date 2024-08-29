@@ -12,7 +12,6 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>,
         if (follow.id == null || follow.actorId == null || follow.objectId == null) {
             return;
         }
-
         const parsed = ctx.parseUri(follow.objectId);
         const followerHandle = await getActorHandle(follow.actorId);
         if (parsed?.type !== "actor" || !isHosted(parsed.handle)) return;
