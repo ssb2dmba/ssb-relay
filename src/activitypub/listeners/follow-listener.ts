@@ -1,4 +1,4 @@
-import { Accept, Federation, Follow, InboxListenerSetters } from "@fedify/fedify";
+import { Accept, Follow, type InboxListenerSetters } from "@fedify/fedify";
 import { isHosted } from "../common.js";
 
 function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>): InboxListenerSetters<void> {

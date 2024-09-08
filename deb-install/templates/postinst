@@ -148,7 +148,7 @@ fi
 
 
 cd /usr/local/ssb-relay/
-su ssb -c "./node_modules/.bin/pm2 start"
+su ssb -c "./node_modules/.bin/pm2 start ecosystem.config.cjs"
 su ssb -c "./node_modules/.bin/pm2 save"
 
 # https://github.com/Unitech/pm2/issues/3924

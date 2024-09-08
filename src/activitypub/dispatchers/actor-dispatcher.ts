@@ -1,4 +1,4 @@
-import { Endpoints, Federation, Multikey, Person, exportJwk, generateCryptoKeyPair, importJwk } from "@fedify/fedify";
+import { Endpoints, type Federation, Person, generateCryptoKeyPair, importJwk } from "@fedify/fedify";
 
 
 import { isHosted } from "../common.js";
@@ -13,7 +13,7 @@ function setActorDispatcher(federation: Federation<void>) {
         "/users/{handle}",
         async (ctx, handle) => {
             const about = await isHosted(handle);
-            if (about === false) return null;
+            if (about === null) return null;
             return new Person({
                 id: ctx.getActorUri(handle),
                 preferredUsername: handle,
