@@ -4,6 +4,7 @@ import { Endpoints, type Federation, Person, generateCryptoKeyPair, importJwk } 
 import { isHosted } from "../common.js";
 import { ActivityPubKeyPairRepositoryImpl } from "../../repository/ap-keypair-repository-impl.js";
 import { ActivityPubKeypair } from "../../entities/ap-keypair.js";
+import { Temporal } from "@js-temporal/polyfill";
 
 const activityPubKeyPairRepositoryImpl = new ActivityPubKeyPairRepositoryImpl();
 
@@ -29,16 +30,15 @@ function setActorDispatcher(federation: Federation<void>) {
                 endpoints:  new Endpoints({ sharedInbox: ctx.getInboxUri() }),
                 assertionMethod:  (await ctx.getActorKeyPairs(handle))
                 .map((pair) => pair.multikey).pop(),
-                
+                icon: new URL(`@${handle}/icon`, ctx.url),
+                published: Temporal.Instant.fromEpochMilliseconds(about.message.value.timestamp)
             });
         },
     ).setKeyPairsDispatcher(async (ctx, handle) => {
         if (!isHosted(handle)) return [];
         const entry = await activityPubKeyPairRepositoryImpl.getActivityPubKeyPair(handle);
         if (!entry) {
-            // Generate a new key pair at the first time:
             const { privateKey, publicKey } = await generateCryptoKeyPair("RSASSA-PKCS1-v1_5");
-            // Store the generated key pair to the Deno KV database in JWK format:
             activityPubKeyPairRepositoryImpl.setActivityPubKeyPair(
                 await ActivityPubKeypair.fromCryptoKeyPair(handle, publicKey, privateKey)
             );

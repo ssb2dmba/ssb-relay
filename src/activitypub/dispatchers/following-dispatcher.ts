@@ -3,8 +3,6 @@ import { AP_COLLECTION_WINDOW, isHosted } from "../common.js";
 import getPool from "../../repository/pool.js";
 import type SsbAbout from "../../ssb/types/about-type.js";
 
-
-
 function setFollowingDispatcher(federation: Federation<void>) {
   federation
     .setFollowingDispatcher(
@@ -37,8 +35,8 @@ function setFollowingDispatcher(federation: Federation<void>) {
         };
       },
     )
-    .setFirstCursor(async (ctx, handle) => "0")
-    .setLastCursor(async (ctx, handle) => {
+    .setFirstCursor(async (_ctx, _handle) => "0")
+    .setLastCursor(async (_ctx, handle) => {
       const total = await countFollowingsByUserHandle(handle);
       // The last cursor is the offset of the last page:
       return (total - (total % AP_COLLECTION_WINDOW)).toString();
@@ -100,8 +98,7 @@ contacts as (
     from message 
     where 
         message->'value'->'content'->>'type' = 'contact' 
-        and $1 = $1
-        --- and message->'value'->>'author' = $1
+        and message->'value'->>'author' = $1
 ),
 --- get last contact status for each contact
 lastcontact as (

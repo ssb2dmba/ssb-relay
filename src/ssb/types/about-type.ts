@@ -9,7 +9,8 @@ export default interface SsbAbout {
         type: string;
         about: string;
         description: null | string;
-        actorId: string | string;
+        actorId: string | null;
+        inboxId: string | null;
       };
       previous: null | string;
       sequence: number;

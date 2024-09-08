@@ -33,8 +33,8 @@ function setOutBoxDispatcher(federation: Federation<void>) {
               return { items, nextCursor: (offset + AP_COLLECTION_WINDOW).toString(), totalItems: total };
         },
     )
-    .setFirstCursor(async (ctx, handle) => "0")
-    .setLastCursor(async (ctx, handle) => {
+    .setFirstCursor(async (_ctx, _handle) => "0")
+    .setLastCursor(async (_ctx, handle) => {
         const total = await countPostsByUserHandle(handle);
         return (total - (total % AP_COLLECTION_WINDOW)).toString();
       })
