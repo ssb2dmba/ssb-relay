@@ -1,4 +1,4 @@
-import {  InboxListenerSetters, Undo } from "@fedify/fedify";
+import {  type InboxListenerSetters, Undo } from "@fedify/fedify";
 
 function setUndoListener(inboxListenerSetter: InboxListenerSetters<void>): InboxListenerSetters<void> {
     return inboxListenerSetter.on(Undo, async (ctx, create) => {

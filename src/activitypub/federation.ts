@@ -9,6 +9,7 @@ import setErrorListener from "./listeners/errors-listener";
 import setFollowingDispatcher from "./dispatchers/following-dispatcher";
 import setFollowersDispatcher from "./dispatchers/followers-dispatcher";
 import setOutBoxDispatcher from "./dispatchers/outbox-dispatcher";
+import setObjectDispatcher from "./dispatchers/object-dispatcher";
 import setNodeInfoDispatcher from "./dispatchers/node-info-dispatcher";
 import setUndoListener from "./listeners/undo-listener";
 
@@ -43,6 +44,7 @@ class MyFederation {
     setNodeInfoDispatcher(this.federation);
     setActorDispatcher(this.federation);
     setOutBoxDispatcher(this.federation);
+    setObjectDispatcher(this.federation);
     return this.federation;
   }
 
