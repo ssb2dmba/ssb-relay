@@ -13,8 +13,6 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot
                 logger.warn(`incomplete follow cancelled:${follow}`);
                 return;
             }
-            console.log(follow.objectId)
-
             const parsed = ctx.parseUri(follow.objectId);
             const about =await isHosted(parsed.handle);
             if (parsed?.type !== "actor" || about==null) {
@@ -32,7 +30,7 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot
                 contact: keyPair.id,
                 following: true
             }, (err) => {
-                if (err) console.log(err);
+                if (err) logger.error(err);
             });
 
             const handle= aboutToHandle(about);
