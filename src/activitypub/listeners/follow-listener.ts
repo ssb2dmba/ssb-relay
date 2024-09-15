@@ -1,5 +1,5 @@
 import { Accept, Follow, type InboxListenerSetters, type Person, getActorHandle } from "@fedify/fedify";
-import { isHosted, updateAbout } from "../common.js";
+import { aboutToHandle, isHosted, updateAbout } from "../common.js";
 import { getLogger } from "@logtape/logtape";
 import type { Scuttlebot } from "../../ssb/types/scuttlebot-type.js";
 import { SsbKeyPairRepositoryImpl } from "../../entities/ssb-keypair-repository-impl.js";
@@ -35,9 +35,7 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot
                 if (err) console.log(err);
             });
 
-            const handle = btoa(about?.message.value.author).replace("=","");
-            console.log(handle)
-            console.log("================")
+            const handle= aboutToHandle(about);
             await ctx.sendActivity(
                 { handle: handle },
                 follower,

@@ -7,7 +7,7 @@ import {
   exportJwk,
 } from "@fedify/fedify";
 
-import { isHosted, ssbKeyToCryptoKey } from "../common.js";
+import { aboutToHandle, isHosted } from "../common.js";
 import { ActivityPubKeyPairRepositoryImpl } from "../../repository/ap-keypair-repository-impl.js";
 import { ActivityPubKeypair } from "../../entities/ap-keypair.js";
 import { Temporal } from "@js-temporal/polyfill";
@@ -21,7 +21,7 @@ function setActorDispatcher(federation: Federation<void>) {
       if (about === null) return null;
       //
       const preferredUsername = about?.message.value.content.name;
-      const handle= btoa(about?.message.value.author).replace("=","");
+      const handle= aboutToHandle(about);
       return new Person({
         id: ctx.getActorUri(p_handle),
         preferredUsername: preferredUsername,
@@ -49,7 +49,7 @@ function setActorDispatcher(federation: Federation<void>) {
     })
     .mapHandle(async (ctx, username) => {
       const about = await isHosted(username);
-      const handle= btoa(about?.message.value.author).replace("=","");
+      const handle= aboutToHandle(about);
       console.log("mapped handle to",username, handle);
       return handle;
     })
@@ -57,7 +57,7 @@ function setActorDispatcher(federation: Federation<void>) {
     .setKeyPairsDispatcher(async (_ctx, p_handle) => {
       const about = await isHosted(p_handle);
       if (about === null) return [];
-      const handle= btoa(about?.message.value.author).replace("=","");
+      const handle= aboutToHandle(about);
       const result: CryptoKeyPair[] = [];
 
       let apKeyPairentries =

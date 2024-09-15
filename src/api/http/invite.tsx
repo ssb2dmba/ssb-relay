@@ -1,16 +1,14 @@
 import { Invite } from "@fedify/fedify";
-import b2a from "b2a";
 import { Hono } from "hono";
 import { CookieStore, type Session, sessionMiddleware } from "hono-sessions";
 import { cors } from "hono/cors";
-import type { FC } from "hono/jsx";
 import pull from "pull-stream";
-import { renderToString } from "react-dom";
 import svgCaptcha from "svg-captcha";
 import type { Scuttlebot } from "../../ssb/types/scuttlebot-type";
 import InviteCaptchaInvalid from "./views/invite-captcha-invalid";
 import InviteCaptchaRequest from "./views/invite-captcha-request";
 import InviteCaptchaResponse from "./views/invite-captcha-response";
+import ssbConfig from "ssb-config";
 
 type CallbackFunction = (end: boolean | string) => void;
 
@@ -54,11 +52,12 @@ function createApi(sbot: Scuttlebot) {
 
   const store = new CookieStore();
   api.use("/*", cors());
+  const cookieKey = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64");
   api.use(
     "*",
     sessionMiddleware({
       store,
-      encryptionKey: "password_at_least_32_characters_long", // Required for CookieStore, recommended for others
+      encryptionKey: cookieKey, // Required for CookieStore, recommended for others
       expireAfterSeconds: 900, // Expire session after 15 minutes of inactivity
       cookieOptions: {
         sameSite: "Lax", // Recommended for basic CSRF protection in modern browsers
@@ -80,6 +79,7 @@ function createApi(sbot: Scuttlebot) {
   });
 
   api.get("/", (c) => {
+    console.log(ssbConfig.port)
     return c.html(<InviteCaptchaRequest />);
   });
 
@@ -96,7 +96,7 @@ function createApi(sbot: Scuttlebot) {
       let invite = await getInvitePromise(sbot);
       invite = invite.split("@")[1];
       const host = c.req.header("host");
-      invite = btoa(`${host}:8008:@${invite}`); // @TODO read port from sbots config
+      invite = btoa(`${host}:${ssbConfig.port}:@${invite}`); // @TODO read port from sbots config
       console.warn("🎉 new invite sent");
       return c.redirect(`/invite/invite-captcha-reponse?invite=${invite}`);
     } catch (e) {

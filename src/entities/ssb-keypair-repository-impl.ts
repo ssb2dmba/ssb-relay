@@ -5,7 +5,8 @@ import ssbKeys from "ssb-keys";
 import type {  Person } from "@fedify/fedify";
 import ssbFeed from "ssb-feed";
 import type { Scuttlebot } from "../ssb/types/scuttlebot-type";
-
+import { getLogger } from "@logtape/logtape";
+const logger = getLogger(["ssb-relay", "SsbKeyPairRepositoryImpl"]);
 
 export interface SsbIdentity   {
     id: string,
@@ -42,7 +43,7 @@ export class SsbKeyPairRepositoryImpl implements SsbKeyPairRepository {
     }
 
     feed.publish(ssbAbout, (err) => {
-        if (err) console.error(err);
+        if (err) logger.error(err);
     });
 
     return keyPair;
@@ -50,7 +51,7 @@ export class SsbKeyPairRepositoryImpl implements SsbKeyPairRepository {
 
   async getOrCreateSsbKeyPair(person: Person, sbot: Scuttlebot): Promise<SsbIdentity> {
     const dbResponse = await getPool().query("SELECT * FROM ssb_keypair where handle = $1", [person.id.href]).catch((err) => { 
-      console.log(err.toString());
+      logger.error(err.toString());
     });
 
     const result = dbResponse.rows.map((item) => {

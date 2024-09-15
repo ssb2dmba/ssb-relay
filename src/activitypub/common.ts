@@ -167,4 +167,8 @@ function getContentHtml(txt: string): string {
   return md.render(txt);
 }
 
-export { isHosted, getContentHtml, hasAbout, updateAbout };
+function aboutToHandle(about: SsbAbout): string {
+  return Buffer.from(about.message.value.author).toString('base64').replace("=","");
+}
+
+export { isHosted, getContentHtml, hasAbout, updateAbout,aboutToHandle };
