@@ -55,14 +55,20 @@ ALTER TABLE public.root OWNER TO ssb;
 
 
 CREATE TABLE public.ap_keypair (
-    handle VARCHAR(255) PRIMARY KEY,
+    handle VARCHAR(255) ,
     public_key TEXT NOT NULL,
     private_key TEXT NOT NULL
 );
 
 ALTER TABLE public.ap_keypair OWNER TO ssb;
 
+CREATE TABLE public.ssb_keypair (
+    handle VARCHAR(255) PRIMARY KEY,
+    public_key TEXT NOT NULL,
+    private_key TEXT NOT NULL
+);
 
+ALTER TABLE public.ssb_keypair OWNER TO ssb;
 
 --
 -- PostgreSQL database dump complete

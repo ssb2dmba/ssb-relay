@@ -35,7 +35,7 @@ class MyFederation {
     // add listeners
     const inboxListener = setInboxListener(this.federation);
     setCreateListener(inboxListener);
-    setFollowListener(inboxListener);
+    setFollowListener(inboxListener, this.sbot);
     setUndoListener(inboxListener);
     setErrorListener(inboxListener);
     // add dispatchers

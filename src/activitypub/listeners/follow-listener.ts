@@ -1,30 +1,51 @@
-import { Accept, Follow, type InboxListenerSetters } from "@fedify/fedify";
-import { isHosted } from "../common.js";
-
-function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>): InboxListenerSetters<void> {
+import { Accept, Follow, type InboxListenerSetters, type Person, getActorHandle } from "@fedify/fedify";
+import { isHosted, updateAbout } from "../common.js";
+import { getLogger } from "@logtape/logtape";
+import type { Scuttlebot } from "../../ssb/types/scuttlebot-type.js";
+import { SsbKeyPairRepositoryImpl } from "../../entities/ssb-keypair-repository-impl.js";
+import ssbFeed from "ssb-feed";
+const logger = getLogger(["ssb-relay", "federation"]);
+const ssbKeyPairRepositoryImpl = new SsbKeyPairRepositoryImpl();
+function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot: Scuttlebot): InboxListenerSetters<void> {
     return inboxListenerSetter.on(Follow, async (ctx, follow) => {
-        console.log("Follow received");
-        console.log(`${follow.actorId} follows ${follow.objectId}`);
+
         if (follow.id == null || follow.actorId == null || follow.objectId == null) {
-            console.log("incomplete follow cancelled:", follow);
+                logger.warn(`incomplete follow cancelled:${follow}`);
                 return;
             }
-            const parsed = ctx.parseUri(follow.objectId);
-            console.log(parsed);
+            console.log(follow.objectId)
 
-            if (parsed?.type !== "actor" || isHosted(parsed.handle)==null) {
-                console.log("Follow cancelled actor is not hosted1:", parsed);
+            const parsed = ctx.parseUri(follow.objectId);
+            const about =await isHosted(parsed.handle);
+            if (parsed?.type !== "actor" || about==null) {
+                logger.warn("Follow cancelled actor is not hosted1:", parsed);
                 return;
             }
             const follower = await follow.getActor(ctx);
-            console.log(follower);
+
+            const keyPair = await ssbKeyPairRepositoryImpl.getOrCreateSsbKeyPair(follower as Person, sbot);
+
+            const feed = ssbFeed(sbot, keyPair)
+            updateAbout(follower as Person, sbot);
+            feed.publish({
+                type: 'contact',
+                contact: keyPair.id,
+                following: true
+            }, (err) => {
+                if (err) console.log(err);
+            });
+
+            const handle = btoa(about?.message.value.author).replace("=","");
+            console.log(handle)
+            console.log("================")
             await ctx.sendActivity(
-                { handle: parsed.handle },
+                { handle: handle },
                 follower,
                 new Accept({ actor: follow.objectId, object: follow }),
-              );
-            // TODO store follower in database or in sbot ?              
+              );         
         });
 }
 
 export default setFollowListener;
+
+

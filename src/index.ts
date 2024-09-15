@@ -7,6 +7,7 @@ configure({
   filters: {},
   loggers: [
     { category: "fedify", sinks: ["console"], level: "info" },
+    { category: "ssb-relay", sinks: ["console"], level: "info" },
     { category: [ 'logtape', 'meta'], sinks: ["console"], level: "warning" },
   ],
 });

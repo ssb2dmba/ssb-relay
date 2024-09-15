@@ -7,8 +7,8 @@ function setFollowingDispatcher(federation: Federation<void>) {
   federation
     .setFollowingDispatcher(
       "/users/{handle}/following",
-      async (ctx, handle, cursor) => {
-        const about = await isHosted(handle);
+      async (ctx, p_handle, cursor) => {
+        const about = await isHosted(p_handle);
         if (about == null) return null;
 
         const offset = Number.parseInt(cursor);
