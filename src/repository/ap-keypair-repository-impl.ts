@@ -19,6 +19,8 @@ export class ActivityPubKeyPairRepositoryImpl implements ActivityPubKeyPairRepos
     dbResponse.rows.map((item) => {
       result.push(ActivityPubKeypair.fromDbRow(item));
     });
+    // put the rsa key in first (longuest pk)
+    result.sort((b, a) => a.publicKey.length - b.publicKey.length);
     return result;
   }
 

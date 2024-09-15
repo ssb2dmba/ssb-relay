@@ -35,7 +35,8 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot
 
             const handle= aboutToHandle(about);
             await ctx.sendActivity(
-                { handle: handle },
+                { handle: parsed.handle },
+                
                 follower,
                 new Accept({ actor: follow.objectId, object: follow }),
               );         
