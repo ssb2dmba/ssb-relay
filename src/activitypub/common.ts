@@ -15,7 +15,7 @@ const isHosted = memoize(naiveisHosted)
 
 async function naiveisHosted(handle: string): Promise<SsbAbout> {
 
-  const query1 = `
+  const queryBySsbKey = `
 with lastofname as (
     select * from message 
     where 
@@ -53,7 +53,7 @@ with lastofname as (
     select * from lastofname where message->'value'->>'author' in (select contact from following);
 `;
 
-  const query2 = `
+  const queryByName = `
 with lastofname as (
     select * from message 
     where 
@@ -96,18 +96,14 @@ with lastofname as (
   const parsed = Buffer.from(handle,'base64').toString('utf-8');
   if (!parsed.endsWith(".ed25519")) {
     queryParam = handle;
-    query = query1;
+    query = queryBySsbKey;
   } else {
     queryParam =parsed;
-    query = query2;
+    query = queryByName;
   }
   const queryParams = [queryParam];
   const result = await getPool()
     .query(query, queryParams)
-    .catch((err) => {S
-      console.log(err);
-      console.log(query, queryParams);
-    });
   if (result.rowCount > 0) {
     return result.rows[0];
   }
