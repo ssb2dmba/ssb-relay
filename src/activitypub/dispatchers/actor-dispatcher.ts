@@ -47,10 +47,9 @@ function setActorDispatcher(federation: Federation<void>) {
         manuallyApprovesFollowers: false,
       })
     })
-    .mapHandle(async (ctx, username) => {
+    .mapHandle(async (_ctx, username) => {
       const about = await isHosted(username);
       const handle= aboutToHandle(about);
-      console.log("mapped handle to",username, handle);
       return handle;
     })
 
@@ -63,7 +62,6 @@ function setActorDispatcher(federation: Federation<void>) {
       let apKeyPairentries =
         await activityPubKeyPairRepositoryImpl.getActivityPubKeyPairs(handle);
       if (apKeyPairentries.length === 0) {
-        console.log("not found generating new keypair", handle);
         const rsa = await generateCryptoKeyPair("RSASSA-PKCS1-v1_5");
         activityPubKeyPairRepositoryImpl.setActivityPubKeyPair(
           await ActivityPubKeypair.fromCryptoKeyPair(

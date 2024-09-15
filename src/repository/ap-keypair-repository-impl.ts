@@ -14,9 +14,7 @@ export class ActivityPubKeyPairRepositoryImpl implements ActivityPubKeyPairRepos
   }
 
   async getActivityPubKeyPairs(handle: string): Promise<ActivityPubKeypair[]> {
-    const dbResponse = await getPool().query("SELECT * FROM ap_keypair where handle = $1", [handle]).catch((err) => { 
-      console.log(err.toString());
-    });
+    const dbResponse = await getPool().query("SELECT * FROM ap_keypair where handle = $1", [handle])
     const result: ActivityPubKeypair[] = [];
     dbResponse.rows.map((item) => {
       result.push(ActivityPubKeypair.fromDbRow(item));

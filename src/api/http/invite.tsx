@@ -79,7 +79,6 @@ function createApi(sbot: Scuttlebot) {
   });
 
   api.get("/", (c) => {
-    console.log(ssbConfig.port)
     return c.html(<InviteCaptchaRequest />);
   });
 
