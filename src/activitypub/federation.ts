@@ -34,7 +34,7 @@ class MyFederation {
     });
     // add listeners
     const inboxListener = setInboxListener(this.federation);
-    setCreateListener(inboxListener);
+    setCreateListener(inboxListener, this.sbot);
     setFollowListener(inboxListener, this.sbot);
     setUndoListener(inboxListener);
     setErrorListener(inboxListener);

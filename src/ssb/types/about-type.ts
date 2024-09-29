@@ -1,5 +1,4 @@
 export default interface SsbAbout {
-  message: {
     key: string;
     value: {
       hash: string;
@@ -19,4 +18,3 @@ export default interface SsbAbout {
     };
     timestamp: number;
   };
-}

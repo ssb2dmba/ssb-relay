@@ -11,6 +11,9 @@ module.exports = function implementation(db) {
     const client = await getPool().connect();
     try {
       result = await client.query(text, [message]);
+      //if (result.rowCount>0) {
+        db.sbot.emit("published", message);
+      //}
     } catch (e) {
       console.log(e)
     } finally {
@@ -26,6 +29,7 @@ module.exports = function implementation(db) {
         cb(err);
       } else {
         insertMessage(data);
+        
         setTimeout(() => {
           // setTimeout help test works ...
           cb(null, data);

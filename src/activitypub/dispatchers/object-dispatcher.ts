@@ -6,7 +6,7 @@ import {
   type RequestContext,
   type Federation,
 } from "@fedify/fedify";
-import { getContentHtml, isHosted } from "../common.js";
+import { base64ToHex, decodeSsbMessageURI, encodeSsbMessageURI, getContentHtml, isHosted } from "../common.js";
 import getPool from "../../repository/pool.js";
 import type SsbPost from "../../ssb/types/post-type.ts";
 import { Temporal } from "@js-temporal/polyfill";
@@ -19,47 +19,49 @@ function setObjectDispatcher(federation: Federation<void>) {
     Article,
     "/posts/{uuid}",
     async (ctx, { uuid }) => {
-      const post = await getPost(uuid);
+      const key = decodeSsbMessageURI(uuid);
+      const post = await getPost(key);
       if (post == null) return null;
-      const comments = await getComments(post.message.key);
+      const comments = await getComments(post.key);
       return await toArticle(ctx, post, comments);
     },
   );
 
-  async function getPost(uuid: string): Promise<SsbPost | null> {
-    const key = atob(uuid);
+  async function getPost(key: string): Promise<SsbPost | null> {
+
     const params = [key];
-    const about = await isHosted(key);
     const query = `select * from message where message->>'key' = $1;`;
     const result = await getPool().query(query, params);
     if (result.rowCount === 0) return null;
-    return result.rows[0];
+    return result.rows[0].message;
   }
 
   async function toArticle(
     context: RequestContext<void>,
-    row: SsbPost,
+    ssbPost: SsbPost,
     comments: Array<SsbPost>,
   ) {
-    const id = btoa(row.message.key).replace("==", "");
+    //const id = btoa(ssbPost.key).replace("==", "");
+    const id = encodeSsbMessageURI(ssbPost.key);
     const url = new URL(`/posts/${id}`, context.url);
-    const attribution = row.message.value.content.attribution
-      ? new URL(row.message.value.content.attribution)
+    const attribution = ssbPost.value.content.attribution
+      ? new URL(ssbPost.value.content.attribution)
       : context.getActorUri(
-          await getLocalHandleForMessage(row.message.value.author),
+        base64ToHex(ssbPost.value.author.substring(1).replace(".ed25519", "")),
         );
+    //const attribution= base64ToHex(ssbPost.value.author.substring(1).replace(".ed25519", ""))
     // TODO handle messages with mentions only.
     return new Article({
       id: url,
       attribution: attribution,
       to: PUBLIC_COLLECTION,
-      summary: row.message.value.content.summary,
-      content: getContentHtml(row.message.value.content.text),
-      published: Temporal.Instant.fromEpochMilliseconds(row.message.value.timestamp),
+      summary: ssbPost.value.content.summary,
+      content: getContentHtml(ssbPost.value.content.text),
+      published: Temporal.Instant.fromEpochMilliseconds(ssbPost.value.timestamp),
       url,
       replies: new Collection({
         first: new CollectionPage({
-          items: comments.map((c) => new URL(btoa(c.message.key).replace("==", ""),context.url)),
+          items: comments.map((c) => new URL(btoa(c.key).replace("==", ""),context.url)),
         }),
       }),
     });

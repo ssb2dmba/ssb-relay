@@ -27,8 +27,10 @@ function setFollowListener(inboxListenerSetter: InboxListenerSetters<void>, sbot
             updateAbout(follower as Person, sbot);
             feed.publish({
                 type: 'contact',
-                contact: keyPair.id,
-                following: true
+                contact: about.value.author,
+                following: true,
+                actorId: follow.actorId,
+                inboxId: follow.objectId,
             }, (err) => {
                 if (err) logger.error(err);
             });

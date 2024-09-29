@@ -17,9 +17,14 @@
 //const pull = require("pull-stream");
 import pull from "pull-stream";
 import type { Scuttlebot } from "./types/scuttlebot-type";
+import type SsbPost from "./types/post-type";
+import { Article, Create, Note, PUBLIC_COLLECTION, Recipient } from "@fedify/fedify";
+import { Temporal } from "@js-temporal/polyfill";
+import { base64ToHex, encodeSsbMessageURI } from "../activitypub/common";
+
 
 // biome-ignore lint/complexity/noBannedTypes: <explanation>
-export function createNetWorkRules(server: Scuttlebot): object {
+export function createNetWorkRules(server: Scuttlebot, fedi:any): object {
   const cbs: any[] = [];
   function onReady(fn: Function) {
     if (cbs) cbs.push(fn);
@@ -81,11 +86,55 @@ export function createNetWorkRules(server: Scuttlebot): object {
     );
   }
 
+
+
+  server.on("published", async (msg: SsbPost) => {
+    const host = `https://${server.config.connections.incoming.net.filter((e) => e.host !== undefined)[0].host}`;
+    try {
+    const ctx = fedi.createContext(new URL(host), undefined);
+    const senderHandle =base64ToHex(msg.value.author.substring(1).replace(".ed25519", ""));
+    const msgKey = encodeSsbMessageURI(msg.key);
+    await ctx.sendActivity(
+      { handle: senderHandle },
+      "followers",
+      new Create({
+        actor: ctx.getActorUri(senderHandle),
+        to: PUBLIC_COLLECTION,
+        cc: ctx.getFollowersUri(senderHandle),
+        id: new URL(`${host}/posts/${msgKey}#activity`),
+        published: Temporal.Now.instant(),
+        object: new Note({
+          id: new URL(`${host}/posts/${msgKey}`),
+          attribution: ctx.getActorUri(senderHandle),
+          to: PUBLIC_COLLECTION,
+          cc: ctx.getFollowersUri(senderHandle),
+          //summary: msg.value.content.text,
+          sensitive: false,
+          attachments: null,
+          published: Temporal.Now.instant(),
+          url: new URL(`${host}/posts/${msgKey}`),
+          content: msg.value.content.text,
+          mediaType: "text/html",
+        }),
+      }),
+      { 
+        immediate: true,
+        excludeBaseUris: [new URL(host)],
+        preferSharedInbox: true 
+
+      },  
+    );
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+
   // opinion when client terminate receiving his own messages relay query them also
   // opinion: on connect server call for client new message
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   server.on("rpc:connect", (rpc: any, isClient: any) => {
-    if (rpc.stream === undefined) return;
+   if (rpc.stream === undefined) return;
     try {
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       server.last.get(rpc.id, (err: any, message: any) => {
@@ -93,13 +142,13 @@ export function createNetWorkRules(server: Scuttlebot): object {
         if (err || Object.keys(message).length === 0) {
           sequence = 0;
         } else {
-          sequence = message.sequence;
+          sequence = message.value.sequence;
         }
         pull(
           rpc.createHistoryStream({
             id: rpc.id,
             seq: sequence,
-            live: true,
+            live: false,
           }),
           createHistoryStreamSink(rpc),
         );

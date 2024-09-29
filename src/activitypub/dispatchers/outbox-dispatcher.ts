@@ -1,5 +1,5 @@
 import { Article, Create, type Federation } from "@fedify/fedify";
-import { AP_COLLECTION_WINDOW, getContentHtml, isHosted } from "../common.js";
+import { AP_COLLECTION_WINDOW, encodeSsbMessageURI, getContentHtml, isHosted } from "../common.js";
 import getPool from "../../repository/pool.js";
 
 
@@ -11,20 +11,20 @@ function setOutBoxDispatcher(federation: Federation<void>) {
             const offset= Number.parseInt(cursor);
             const about = await isHosted(handle);
             if (about === null) return null;
-            const total = await countPostsByUserKey(about.message.value.author);
+            const total = await countPostsByUserKey(about.value.author);
             const posts = await getPostsByUserKey(
-                about.message.value.author,
+                about.value.author,
                 { offset, limit: AP_COLLECTION_WINDOW }
               );
             const items = posts.map(row =>  {
-                const id = btoa(row.message.key).replace("==", "");
+                const id = encodeSsbMessageURI(row.key);
                 return new Create({
                   id: new URL(`/posts/${id}#activity`, ctx.url),
                   actor: ctx.getActorUri(handle),
                   object: new Article({
                     id: new URL(`/posts/${id}`, ctx.url),
-                    summary: row.message.value.content.summary,
-                    content: getContentHtml(row.message.value.content.text)
+                    summary: row.value.content.summary,
+                    content: getContentHtml(row.value.content.text)
                   }),
                 })
             }
@@ -45,7 +45,7 @@ function setOutBoxDispatcher(federation: Federation<void>) {
 
 async function countPostsByUserHandle(handle: string) {
     const about = await isHosted(handle);
-    return countPostsByUserKey(about.message.value.author);
+    return countPostsByUserKey(about.value.author);
 }
 
 async function countPostsByUserKey(key: string) : Promise<number>  {
@@ -61,7 +61,7 @@ async function getPostsByUserKey(author: string, opts: { offset: number; limit: 
     const queryParams = [author, opts.limit, opts.offset];
     const query = "select * from message where message->'value'->'content'->>'type'='post' and message->'value'->>'author'= $1 order by message->'value'->'sequence' desc limit $2 offset $3;";
     const result = await getPool().query(query, queryParams);
-    return result.rows;
+    return result.rows.map(row => row.message);
 }
 
 

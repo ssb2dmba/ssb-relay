@@ -25,14 +25,17 @@ module.exports = function implementation(sbot) {
 
   sbot.last = {};
   sbot.last.get = async (key, cb) => {
+    console.log("last.get ?????????? ", key);
     if (typeof key === "object") {
       meta = key.meta;
       key = key.id;
     }
     try {
       const data = await selectLast(key);
+
       if (data.rowCount > 0) {
-        cb(null, data.rows[0].message.value);
+        console.log("---------->", data.rows[0].message);
+        cb(null, data.rows[0].message);
       } else {
         cb(null, {});
       }

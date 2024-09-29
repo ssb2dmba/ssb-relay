@@ -1,5 +1,4 @@
 export default interface SsbPost {
-  message: {
     key: string;
     value: {
       hash: string;
@@ -23,4 +22,3 @@ export default interface SsbPost {
     };
     timestamp: number;
   };
-}

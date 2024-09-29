@@ -13,20 +13,20 @@ function setFollowingDispatcher(federation: Federation<void>) {
 
         const offset = Number.parseInt(cursor);
         const total = await countFollowingsByUserKey(
-          about.message.value.author,
+          about.value.author,
         );
         const followings = await getFollowing(
-          about.message.value.author,
+          about.value.author,
           offset,
           AP_COLLECTION_WINDOW,
         );
         const items = followings.map((row) => {
-            if (row.message.value.content.actorId!=null){
+            if (row.value.content.actorId!=null){
                 return new URL(
-                    row.message.value.content.actorId
+                    row.value.content.actorId
                   );
             }
-            return ctx.getActorUri(row.message.value.content.name);
+            return ctx.getActorUri(row.value.content.name);
         });
         return {
           items,
@@ -48,7 +48,7 @@ function setFollowingDispatcher(federation: Federation<void>) {
 
 async function countFollowingsByUserHandle(handle: string) {
   const about = await isHosted(handle);
-  return countFollowingsByUserKey(about.message.value.author);
+  return countFollowingsByUserKey(about.value.author);
 }
 
 async function countFollowingsByUserKey(key: string): Promise<number> {
@@ -126,7 +126,7 @@ order by message->'value'->>'sequence' desc limit $3 offset $2;
 ;
 `;
   const result = await getPool().query(query, queryParams);
-  return result.rows;
+  return result.rows.map((row) => row.message);
 }
 
 export default setFollowingDispatcher;

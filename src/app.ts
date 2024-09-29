@@ -8,10 +8,11 @@ import { createNetWorkRules } from "./ssb/rules";
 
 const app = new Hono();
 const sbot = scuttlebot();
-createNetWorkRules(sbot);
+
 //new SsbBleApplication(sbot);
 const myFederation = new MyFederation(sbot);
 const fedi = myFederation.init();
+createNetWorkRules(sbot,fedi);
 app.use(federation(myFederation.init(), () => undefined));
 
 app.route("/invite/", inviteApiHttp(sbot));

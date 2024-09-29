@@ -7,10 +7,11 @@ import {
   exportJwk,
 } from "@fedify/fedify";
 
-import { aboutToHandle, isHosted } from "../common.js";
+import { aboutToHandle, hexToBase64, isHosted } from "../common.js";
 import { ActivityPubKeyPairRepositoryImpl } from "../../repository/ap-keypair-repository-impl.js";
 import { ActivityPubKeypair } from "../../entities/ap-keypair.js";
 import { Temporal } from "@js-temporal/polyfill";
+import SsbAbout from "../../ssb/types/about-type.js";
 
 const activityPubKeyPairRepositoryImpl = new ActivityPubKeyPairRepositoryImpl();
 
@@ -20,15 +21,16 @@ function setActorDispatcher(federation: Federation<void>) {
       const about = await isHosted(p_handle);
       if (about === null) return null;
       //
-      const preferredUsername = about?.message.value.content.name;
+      const preferredUsername = about?.value.content.name;
       const handle= aboutToHandle(about);
+
       return new Person({
         id: ctx.getActorUri(p_handle),
         preferredUsername: preferredUsername,
         name: preferredUsername,
-        summary: about.message.value.content.description,
+        summary: about.value.content.description,
         url: new URL(`@${handle}`, ctx.url),
-        inbox: ctx.getInboxUri(handle),
+        inbox: ctx.getInboxUri(p_handle),
         followers: ctx.getFollowersUri(handle),
         following: ctx.getFollowingUri(handle),
         outbox: ctx.getOutboxUri(handle),
@@ -41,9 +43,9 @@ function setActorDispatcher(federation: Federation<void>) {
           .pop(),
         icon: new URL(`@${handle}/icon`, ctx.url),
         published: Temporal.Instant.fromEpochMilliseconds(
-          about.message.value.timestamp,
+          about.value.timestamp,
         ),
-        alias: new URL(handle, ctx.url),
+        //alias: new URL(handle, ctx.url),
         manuallyApprovesFollowers: false,
       })
     })

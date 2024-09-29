@@ -10,30 +10,31 @@ function setFollowersDispatcher(federation: Federation<void>) {
   federation
     .setFollowersDispatcher(
       "/users/{handle}/followers",
-      async (ctx, handle, cursor) => {
+      async (ctx, handle, cursor="0") => {
         const about = await isHosted(handle);
         if (about === null) return null;
+        if (cursor === null) cursor = "0";
         const offset = Number.parseInt(cursor);
-        const total = await countFollowersByUserKey(about.message.value.author);
+        const total = await countFollowersByUserKey(about.value.author);
         const followers = await getFollowing(
-          about.message.value.author,
+          about.value.author,
           offset,
           AP_COLLECTION_WINDOW,
         );
         const items: Recipient[] = followers.map((row) => {
           if (
-            row.message.value.content.actorId != null &&
-            row.message.value.content.inboxId != null
+            row.value.content.actorId != null &&
+            row.value.content.inboxId != null
           ) {
             return {
-              id: new URL(row.message.value.content.actorId),
-              inboxId: new URL(row.message.value.content.inboxId), // The URI of the actor's inbox.
+              id: new URL(row.value.content.actorId),
+              inboxId: new URL(row.value.content.inboxId), // The URI of the actor's inbox.
             };
           }
-          if (isHosted(row.message.value.content.name)) {
+          if (isHosted(row.value.content.name)) {
             return {
-              id: ctx.getActorUri(row.message.value.content.name),
-              inboxId: ctx.getInboxUri(row.message.value.content.name),
+              id: ctx.getActorUri(row.value.content.name),
+              inboxId: ctx.getInboxUri(row.value.content.name),
             };
           }
           logger.error("No actorId or inboxId found in about message and actor is not hosted");
@@ -62,7 +63,6 @@ async function getFollowing(
   limit: number,
 ): Promise<SsbAbout[]> {
   const queryParams = [key, offset, limit];
-
   const query = `
   with 
   --- get all contact messages for user key
@@ -102,12 +102,12 @@ async function getFollowing(
   ;
   `;
   const result = await getPool().query(query, queryParams);
-  return result.rows;
+  return result.rows.map((row) => row.message);
 }
 
 async function countFollowersByUserHandle(handle: string) {
   const about = await isHosted(handle);
-  return countFollowersByUserKey(about.message.value.author);
+  return countFollowersByUserKey(about.value.author);
 }
 
 async function countFollowersByUserKey(key: string) {
